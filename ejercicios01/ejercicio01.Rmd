@@ -1,0 +1,201 @@
+---
+title: "Ejercicios 01 - Estadística Computacional"
+author: "Reinaldo Pacheco Parra"
+date: "2023-09-12"
+output: html_document
+---
+
+### Ejercicios 01: Introducción a la Estadística Computacional
+
+## Desafío 1
+"Realice otros 10 ejemplos con diferentes operadores matemáticos"
+
+(1) Potencia
+```{r potencia}
+v1 = 5
+v2 = 2
+potencia = v1 ** v2
+print(paste("El resultado de la potencia es:", potencia))
+```
+(2) Módulo
+```{r modulo}
+v1 = 5
+v2 = 2
+modulo = sqrt(v1*v1 + v2*v2)
+print(paste("El resultado del modulo es:", modulo))
+```
+
+(3) Promedio
+```{r promedio}
+v1 = 5
+v2 = 2
+promedio = (v1+v2)/2
+print(paste("El resultado del promedio es:", promedio))
+```
+
+(4) Resta
+```{r resta}
+v1 = 20
+v2 = 5
+resta = v1 - v2
+print(paste("El resultado de la resta es:", resta))
+```
+
+(5) Resto
+```{r resto}
+v1 = 5
+v2= 2
+resto = v1 %% v2
+print(paste("El resultado del resto es:", resto))
+```
+
+(6) Logaritmo Natural
+```{r logaritmo_natural}
+v1 = 90
+log_v = log(v1)
+print(paste("El resultado de logaritmo natrual de" ,v1, "es", log_v))
+```
+
+(7) Factorial
+```{r factorial}
+v1 = 5
+factorial = factorial(v1)
+print(paste("El resultado del factorial de", v1,"es", factorial))
+```
+
+(8) Valor Absoluto
+```{r vabsoluto}
+v1 = -5
+vabsoluto = abs(v1)
+print(paste("El valor absoluto de",v1, "es:" ,vabsoluto))
+```
+
+(9) Redondeo hacia arriba
+```{r redondeo_arriba}
+v1 = 4.8
+redondeo_arriba = ceiling(v1)
+print(paste("El redondeo hacia arriba de",v1,"es", redondeo_arriba))
+```
+
+(10) Redondeo hacia abajo
+```{r redondeo_abajo}
+v1 = 4.8
+redondeo_abajo = floor(v1)
+print(paste("El redondeo hacia abajo de",v1,"es", redondeo_abajo))
+```
+
+## Desafío 2
+"Realice ejemplos usando otros tipos de estructura de datos: elementos booleanos, factores, tablas, entre otros"
+
+### (1) Grafo de 4 nodos 
+Para crear un grafo con 4 nodos, debemos utilizar la librería "igraph" y darle la cantidad de nodos, su valor y conexiones. Luego mostramos el grafo creado.
+```{r grafo}
+library(igraph)
+
+g = graph(edges=c(1,2, 1,3, 2,4), n=4, directed=FALSE)
+
+plot(g, vertex.label=1:4)
+```
+
+### (2) Operaciones en una tabla
+Creamos una tabla con la función dataframe y dos vectores que simbolizan los nombres de 7 estudiantes y sus notas.
+```{r tabla}
+# vector nombres
+datos = c("Juan", "Pedro", "Diego", "Esteban", "Daniel", "Manuel", "Alexis")
+# vector notas
+notas = c(5.1, 6.3, 7.0, 6.4, 5.4, 6.4, 4.8)
+
+df_estudiantes = data.frame(Nombre = datos, Nota = notas)
+
+print(df_estudiantes)
+```
+
+### (3) Negación de booleanos
+```{r not}
+verdadero = TRUE
+falso = FALSE
+not_true = !verdadero
+not_false = !falso
+print(paste("El valor de verdadero negado es", not_true))
+print(paste("El valor de falso negado es,",not_false))
+```
+
+## Desafío 3
+"Construya una función que permita a un jugador jugar al piedra papel o tijera"
+```{r piedra_papel_tijera}
+piedra_papel_tijera = function(opcion_jugador) {
+  opciones = c("piedra", "papel", "tijera")
+
+  if (opcion_jugador %in% 1:3) {
+    opcion_pc = sample(1:3, 1)
+    print(paste("El jugador eligió", opciones[opcion_jugador]))
+    print(paste("El pc eligió", opciones[opcion_pc]))
+    
+    if (opcion_jugador == opcion_pc) {
+      print("Empate")
+    } else if (
+      (opcion_jugador == 1 && opcion_pc == 3) ||
+      (opcion_jugador == 2 && opcion_pc == 1) ||
+      (opcion_jugador == 3 && opcion_pc == 2)) {
+      print("Ganaste")
+    } else {
+      print("Perdiste")
+    }
+  } else {
+    print("Vuelve a seleccionar tu opción")
+  }
+}
+
+# 1er intento: escogemos piedra
+piedra_papel_tijera(1)
+# 2do intento: escogemos papel
+piedra_papel_tijera(2)
+# 3er intento: escogemos tijera
+piedra_papel_tijera(3)
+```
+
+## Desafío 4
+Estudio del dataset "Sleep"
+
+1.- Seleccione un conjunto de datos desde el paquete ‘datasets’ de R. Para ver los datasets disponibles en la consola puede utilizar la función “data()” o puede consultarlos en la página web https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/00Index.html. Una vez seleccionado puede utilizar la función data(‘nombre_del_dataset’) para cargar el dataset.
+
+```{r sleep_data}
+force(sleep)
+```
+
+2.- Describa el conjunto de datos y explique para que fue o podría ser utilizado. Puede usar la función help(‘nombre_del_dataset’). ¿Cuál es la fuente de los datos?
+
+El dataset "sleep" contiene datos relacionados a la reacción de los pacientes ante el uso de una droga, la cual se ve representada por las horas adicionales o restantes de sueño que produjeron en las personas. En él se registra el tiempo promedio de reacción por día en cada uno de los pacientes en las horas de sueño. Cada grupo contiene 10 pacientes en donde cada uno posee un ID y sus horas adicionales de sueño.
+Esta información puede ser utilizada para crear estadísticas e investigaciones acerca del impacto de fármacos ante distintos grupos de personas.
+
+Los datos fueron extraídos de:
+
+- Cushny, A. R. and Peebles, A. R. (1905) y The action of optical isomers: II hyoscines. The Journal of Physiology 32, 501–510.
+
+- Student (1908) The probable error of the mean. Biometrika, 6, 20.
+
+3.- Describa cada variable, indique a qué tipo de variable corresponde, indique qué valores puede tomar y su unidad de medida.
+
+Las variables de este conjunto de datos son 3.
+
+(1) Extra: es una variable númerica que representa las horas adicionales de sueño.
+(2) Group: es una variable númerica que representa al grupo que pertenece cada paciente.
+(3) ID: es una variable númerica que representa el código que identifica a cada paciente.
+
+4.- Ejecute la función summary(“conjunto_de_datos”). ¿Qué puede observar?
+
+Summary dataset "Sleep"
+```{r sleep_summary}
+summary(sleep)
+```
+Al ejecutar la función summary, se pueden observar las estadísticas descriptivas para las variables "extra" y "group".
+Lo primero que se puede observar es que los pacientes experimentaron variaciones en la cantidad de horas de sueño. Algunos durmieron 1.6 horas menos de lo normal (min. extra) mientras que otras durmieron hasta 5.5 horas más. (max.extra)
+También se puede observar que cada ID (persona) fue evaluada con las dos drogas, por lo cual se pueden realizar comparaciones entre el uso de cada una.
+
+5.- Ejecute la función plot(“conjunto_de_datos”). ¿Qué puede observar?
+Plot dataset "Sleep"
+```{r sleep_plot}
+plot(sleep)
+```
+
+En el gráfico generado se puede apreciar la relación entre las variables de estudio extra, group e id. Se reafirma que cada ID fue evaluado 1 vez para cada droga, además de ver que cada grupo era conformado por 10 pacientes. También se puede observar el resultado de "extra" para cada paciente lo cual indica cuantas horas sobre o bajo la media durmió.
