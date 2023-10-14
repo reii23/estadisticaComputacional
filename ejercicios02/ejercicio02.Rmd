@@ -3,8 +3,8 @@ title: 'Ejercicio 02: Probabilidades, Permutaciones y Combinaciones'
 author: "Reinaldo Pacheco"
 date: "2023-10-08"
 output:
-  word_document: default
   html_document: default
+  word_document: default
   pdf_document: default
 ---
 
@@ -23,9 +23,7 @@ output:
 
 La permutación es el número de formas diferentes en las que se pueden organizar elementos distintos en un orden particular. Se denota como \(P(n, r)\) y su fórmula es la siguiente:
 
-\[
-P(n, r) = \frac{n!}{(n - r)!}
-\]
+\[P(n, r) = \frac{n!}{(n - r)!}\]
 
 - \(n\) es el número total de elementos.
 - \(r\) es el número de elementos seleccionados para la permutación.
@@ -35,9 +33,7 @@ P(n, r) = \frac{n!}{(n - r)!}
 
 La combinación es el número de formas diferentes en las que se pueden seleccionar \(r\) elementos de un conjunto de \(n\). A diferencia de la permutación, no importa el orden de los elementos. Se denota como \(C(n, r)\) y su fórmula es la siguiente:
 
-\[
-C(n, r) = \frac{n!}{r!(n - r)!}
-\]
+\[C(n, r) = \frac{n!}{r!(n - r)!}\]
 
 - \(n\) es el número total de elementos.
 - \(r\) es el número de elementos seleccionados para la combinación.
@@ -49,9 +45,7 @@ C(n, r) = \frac{n!}{r!(n - r)!}
 
 La permutación circular es el número de formas diferentes en las que se pueden organizar \(n\) elementos en un círculo. Se denota como \(PC(n)\) y su fórmula es la siguiente:
 
-\[
-PC(n) = (n - 1)!
-\]
+\[PC(n) = (n - 1)!\]
 
 - \(n\) es el número total de elementos.
 
@@ -59,12 +53,10 @@ PC(n) = (n - 1)!
 
 La permutación con repetición es el número de formas diferentes en las que se pueden organizar \(n\) elementos, se pueden repetir. Se denota como \(PR(n; n_1, n_2, ..., n_k)\) y su fórmula es la siguiente:
 
-\[
-PR(n; n_1, n_2, ..., n_k) = \frac{n!}{n_1! * n_2! * ... * n_k!}
-\]
+\[PR(n; n_1, n_2,..., n_k) = \frac{n!}{n_1! * n_2! * ... * n_k!}\]
 
 - \(n\) es el número total de elementos.
-- \(n_1, n_2, ..., n_k\) son las repeticiones de cada elemento.
+- \(n_1, n_2,..., n_k\) son las repeticiones de cada elemento.
 - \(n!\) es el factorial de \(n\).
 - \(n_1!\), \(n_2!\) son los factoriales de \(n_1\), \(n_2\)
 
@@ -87,9 +79,8 @@ El paquete gtools genera combinaciones y permutaciones sin repetición a partir 
 
 4- Calcule:
 
+a) Permutaciones con y sin repetición con n=9 y r=4
 ```{r a}
-# a) Permutaciones con y sin repetición con n=9 y r=4
-
 permutacion_con_repeticion = nrow(permutations(9, 4 ,repeats.allowed = TRUE))
 print(paste("Permutaciones con repetición:", permutacion_con_repeticion))
 
@@ -97,8 +88,8 @@ permutacion_sin_repeticion = nrow(permutations(9, 4 , repeats.allowed = FALSE))
 print(paste("Permutaciones sin repeticion:", permutacion_sin_repeticion))
 ```
 
+b) Combinaciones de largo cuatro con las letras f, g, h, i y j con y sin repetición
 ```{r b}
-# b) Combinaciones de largo cuatro con las letras f, g, h, i y j con y sin repetición
 letras = c('f', 'g', 'h', 'i', 'j')
 combinaciones_sin_repeticion = choose(length(letras), 4)
 print(paste("Combinaciones sin repetición:", combinaciones_sin_repeticion))
@@ -107,8 +98,8 @@ combinaciones_repeticion = choose(length(letras) + 4 - 1, 4)
 print(paste("Combinaciones con repetición:", combinaciones_repeticion))
 ```
 
+c) Permutaciones y combinaciones con n=30 y r=20 sin repetición
 ```{r c}
-# c) Permutaciones y combinaciones con n=30 y r=20 sin repetición
 n = 30
 r = 20
 
@@ -119,8 +110,8 @@ combinaciones_sin_repeticion = choose(n, r)
 print(paste("Combinaciones sin repetición:", combinaciones_sin_repeticion))
 ```
 
+d) Permutaciones con y sin repetición con n=7 y r=5
 ```{r d}
-# d) Permutaciones con y sin repetición con n=7 y r=5
 n = 7
 r = 5
 
@@ -131,9 +122,8 @@ permutaciones_repeticion = n^r
 print(paste("Permutaciones con repetición:", permutaciones_repeticion))
 ```
 
+e) Combinaciones de largo 2 con los números 1, 2, 3, 4 y 5 con y sin repetición
 ```{r e}
-# e) Combinaciones de largo 2 con los números 1, 2, 3, 4 y 5 con y sin repetición
-
 numeros = c(1,2,3,4,5)
 
 combinaciones_sin_repeticion = choose(length(numeros), 2)
@@ -143,8 +133,8 @@ combinaciones_repeticion = choose(length(numeros) + 2 - 1, 2)
 print(paste("Combinaciones con repetición:", combinaciones_repeticion))
 ```
 
+f) Permutaciones y combinaciones con n=50 y r=10 sin repetición
 ```{r f}
-# f) Permutaciones y combinaciones con n=50 y r=10 sin repetición
 n = 50
 r = 10
 
@@ -155,18 +145,19 @@ combinaciones_sin_repeticion = choose(n, r)
 print(paste("Combinaciones sin repetición:", combinaciones_sin_repeticion))
 ```
 
+g) Permutaciones circulares posibles con n=6
 ```{r g}
-# g) Permutaciones circulares posibles con n=6
 n = 6
 permutaciones_circulares = factorial(n - 1)
 
 print(paste("Permutaciones circulares:", permutaciones_circulares))
 ```
 
+h) combinaciones de largo 3 con las letras x, y, z, w y q con y sin repetición.
 ```{r h}
-# h) combinaciones de largo 3 con las letras x, y, z, w y q con y sin repetición.
 letras = c('x', 'y', 'z', 'w', 'q')
 
+# Combinaciones sin repeticion
 combinaciones_sin_repeticion = choose(length(letras), 3)
 print(paste("Combinaciones sin repetición:", combinaciones_sin_repeticion))
 
@@ -191,13 +182,9 @@ print(paste("Probabilidad Ruta más corta o larga:", prob_1))
 # Probabilidad de elegir la ruta más corta si la ruta previamente elegida fue diferente
 prob_2 = 1/(total_rutas - 1)
 print(paste("Probabilidad de que sea la ruta más corta distinta a la anterior:", prob_2))
-
-# Si se intenta usar funciones como combinations o permutations
-# para generar todas las posibles rutas puede ocurrir un problema
-# debido a las limitaciones de memoria. Es menos eficiente generar
-# todas las permutaciones, que calcular probabilidades usando
-# las propiedades y las fórmulas matemáticas anteriormente explicadas.
 ```
+
+Si se intenta usar funciones como combinations o permutations para generar todas las posibles rutas puede ocurrir un problema debido a las limitaciones de memoria. Es menos eficiente generar todas las permutaciones, que calcular probabilidades usando las propiedades y las fórmulas matemáticas anteriormente explicadas.
 
 6- Un restaurante tiene 4 camareros que deben atender a los clientes. Ana atiende al 20 % de los clientes y olvida 1 de cada 15 órdenes; Bob atiende al 50 % de los clientes y olvida 1 de cada 8 órdenes; Carlos atiende al 20 % de los clientes y olvida 1 de cada 12 órdenes; Diana atiende al 10 % de los clientes y olvida 2 de cada 7 órdenes.
 
@@ -206,44 +193,97 @@ b) ¿Cuál es la probabilidad de que el cliente haya sido atendido por Carlos?
 c) ¿Cuál es la probabilidad de que el cliente haya sido atendido por Ana o Diana?
 d) Calcule la probabilidad de que el cliente haya sido atendido por cualquiera de lo camareros. ¿Qué observa?
 
+Este problema se puede representar mediante el Teorema de Bayes
+\[P(Camarero|\neg Olvido) = \frac{P(\neg Olvido|Camarero) \times P(Camarero)}{P(\neg Olvido)}\]
+
+b) ¿Cuál es la probabilidad de que el cliente haya sido atendido por Carlos?
 ```{r}
-probabilidad_ana = 0.20
+prob_ana = 0.20
 olvido_ana = 1/15
+no_olvido_ana = (1-olvido_ana)
 
-probabildad_bob = 0.50
+prob_bob = 0.50
 olvido_bob = 1/8
+no_olvido_bob = (1-olvido_bob)
 
-probabilidad_carlos = 0.20
+prob_carlos = 0.20
 olvido_carlos = 1/12
+no_olvido_carlos = (1-olvido_carlos)
 
-probabilidad_diana = 0.10
+prob_diana = 0.10
 olvido_diana = 2/7
+no_olvido_diana = (1-olvido_diana)
 
-# b) ¿Cuál es la probabilidad de que el cliente haya sido atendido por Carlos?
-cat("La probabilidad de ser atendido por Carlos es:", probabilidad_carlos)
- 
-# c) ¿Cuál es la probabilidad de que el cliente haya sido atendido por Ana o Diana?
-probabilidad_ana_o_diana = probabilidad_ana + probabilidad_diana
-cat("La Probabilidad de ser atendido por Ana o Diana es:", probabilidad_ana_o_diana)
+p_atendido_carlos = (prob_carlos*no_olvido_carlos)/
+  (prob_ana*no_olvido_ana + prob_bob*no_olvido_bob+
+     prob_diana*no_olvido_diana+prob_carlos*no_olvido_carlos)
 
-# d) Calcule la probabilidad de que el cliente haya sido atendido por cualquiera de los camareros.
-prob_cualquiera = probabilidad_ana + probabildad_bob + probabilidad_carlos + probabilidad_diana
-cat("La Probabilidad de ser atendido por cualquier camarero es de:", prob_cualquiera)
-# se observa que la probabilidad es de 1 o 100%
-# esto quiere decir que un cliente siempre será atendido por cualquiera de los camareros,
-# lo cual es lógico considerando el enunciado de que los camareros
-# deben atender a todos los clientes.
+cat("La probabilidad es:", p_atendido_carlos)
 ```
+ 
+c) ¿Cuál es la probabilidad de que el cliente haya sido atendido por Ana o Diana?
+```{r}
+prob_ana = 0.20
+olvido_ana = 1/15
+no_olvido_ana = (1-olvido_ana)
+
+prob_bob = 0.50
+olvido_bob = 1/8
+no_olvido_bob = (1-olvido_bob)
+
+prob_carlos = 0.20
+olvido_carlos = 1/12
+no_olvido_carlos = (1-olvido_carlos)
+
+prob_diana = 0.10
+olvido_diana = 2/7
+no_olvido_diana = (1-olvido_diana)
+
+p_atendido_ana = (prob_ana*no_olvido_ana)/
+  (prob_carlos*no_olvido_carlos
+   + prob_bob*no_olvido_bob+prob_diana*no_olvido_diana
+   +prob_ana*no_olvido_ana)
+
+p_atendido_diana = (prob_diana*no_olvido_diana)/
+  (prob_carlos*no_olvido_carlos + prob_bob*no_olvido_bob+
+     prob_ana*no_olvido_ana+
+     prob_diana*no_olvido_diana)
+
+p_atendido_ana_diana = p_atendido_ana + p_atendido_diana
+
+prob_ana_o_diana = prob_ana + prob_diana
+cat("La probabilidad es:", p_atendido_ana_diana)
+```
+
+d) Calcule la probabilidad de que el cliente haya sido atendido por cualquiera de los camareros.
+```{r}
+p_olvido = prob_ana * olvido_ana +
+  prob_bob * olvido_bob+
+  prob_carlos * olvido_carlos +
+  prob_diana * olvido_diana
+
+p_ana_dado_olvido = (olvido_ana * prob_ana) / p_olvido
+p_bob_dado_olvido = (olvido_bob * prob_bob) / p_olvido
+p_carlos_dado_olvido = (olvido_carlos * prob_carlos) / p_olvido
+p_diana_dado_olvido = (olvido_diana * prob_diana) / p_olvido
+
+cat("Probabilidad es de:", p_ana_dado_olvido +
+      p_bob_dado_olvido +
+      p_carlos_dado_olvido +
+      p_diana_dado_olvido)
+```
+
+se observa que la probabilidad es de 1 o 100% esto quiere decir que un cliente siempre será atendido por cualquiera de los camareros, lo cual es lógico considerando el enunciado de que los camareros deben atender a todos los clientes.
 
 7- De un grupo de 35 personas, se quiere conocer la opinión de 4 personas (elegidas al azar)
 sobre la legalización de la marihuana. Si se sabe que 18 personas están a favor y 17 en contra, ¿cuál es la probabilidad de que las 4 personas seleccionadas estén en contra?
 
 ```{r}
-probabilidad_1ero = 17/35
-probabilidad_2do = 16/34
-probabilidad_3ero = 15/33
-probabilidad_4to = 14/32
+prob_1ero = 17/35
+prob_2do = 16/34
+prob_3ero = 15/33
+prob_4to = 14/32
 
-probabilidad_total = (probabilidad_1ero*probabilidad_2do*probabilidad_3ero*probabilidad_4to)
-print(paste("La probabilidad es de:", probabilidad_total))
+prob_total = (prob_1ero*prob_2do*prob_3ero*prob_4to)
+print(paste("La probabilidad es de:", prob_total))
 ```

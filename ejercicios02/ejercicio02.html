@@ -13,7 +13,7 @@
 
 <meta name="date" content="2023-10-08" />
 
-<title>Ejercicio 02: probes, Permutaciones y Combinaciones</title>
+<title>Ejercicio 02: Probabilidades, Permutaciones y Combinaciones</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -350,16 +350,16 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">Ejercicio 02: probes, Permutaciones y
-Combinaciones</h1>
+<h1 class="title toc-ignore">Ejercicio 02: Probabilidades, Permutaciones
+y Combinaciones</h1>
 <h4 class="author">Reinaldo Pacheco</h4>
 <h4 class="date">2023-10-08</h4>
 
 </div>
 
 
-<div id="ejercicios-02-probes-permutaciones-y-combinaciones" class="section level2">
-<h2>Ejercicios 02: probes, Permutaciones y Combinaciones</h2>
+<div id="ejercicios-02-probabilidades-permutaciones-y-combinaciones" class="section level2">
+<h2>Ejercicios 02: Probabilidades, Permutaciones y Combinaciones</h2>
 <p>1- Instale los paquetes gtools y combinat con las sentencias:
 install.packages(’gtools’) y install.packages(’combinat’). Incluya las
 librerías gtools (library(gtools)) y combinat (library(combinat)).</p>
@@ -383,9 +383,8 @@ con Repetición.</p>
 organizar elementos distintos en un orden particular. Se denota como
 <span class="math inline">\(P(n, r)\)</span> y su fórmula es la
 siguiente:</p>
-<p><span class="math display">\[
-P(n, r) = \frac{n!}{(n - r)!}
-\]</span></p>
+<p><span class="math display">\[P(n, r) = \frac{n!}{(n -
+r)!}\]</span></p>
 <ul>
 <li><span class="math inline">\(n\)</span> es el número total de
 elementos.</li>
@@ -400,9 +399,8 @@ seleccionados para la permutación.</li>
 seleccionar <span class="math inline">\(r\)</span> elementos de un
 conjunto de <span class="math inline">\(n\)</span>. A diferencia de la
 permutación, no importa el orden de los elementos. Se denota como <span class="math inline">\(C(n, r)\)</span> y su fórmula es la siguiente:</p>
-<p><span class="math display">\[
-C(n, r) = \frac{n!}{r!(n - r)!}
-\]</span></p>
+<p><span class="math display">\[C(n, r) = \frac{n!}{r!(n -
+r)!}\]</span></p>
 <ul>
 <li><span class="math inline">\(n\)</span> es el número total de
 elementos.</li>
@@ -420,9 +418,7 @@ seleccionados para la combinación.</li>
 se pueden organizar <span class="math inline">\(n\)</span> elementos en
 un círculo. Se denota como <span class="math inline">\(PC(n)\)</span> y
 su fórmula es la siguiente:</p>
-<p><span class="math display">\[
-PC(n) = (n - 1)!
-\]</span></p>
+<p><span class="math display">\[PC(n) = (n - 1)!\]</span></p>
 <ul>
 <li><span class="math inline">\(n\)</span> es el número total de
 elementos.</li>
@@ -434,13 +430,12 @@ elementos.</li>
 las que se pueden organizar <span class="math inline">\(n\)</span>
 elementos, se pueden repetir. Se denota como <span class="math inline">\(PR(n; n_1, n_2, ..., n_k)\)</span> y su fórmula es
 la siguiente:</p>
-<p><span class="math display">\[
-PR(n; n_1, n_2, ..., n_k) = \frac{n!}{n_1! * n_2! * ... * n_k!}
-\]</span></p>
+<p><span class="math display">\[PR(n; n_1, n_2,..., n_k) =
+\frac{n!}{n_1! * n_2! * ... * n_k!}\]</span></p>
 <ul>
 <li><span class="math inline">\(n\)</span> es el número total de
 elementos.</li>
-<li><span class="math inline">\(n_1, n_2, ..., n_k\)</span> son las
+<li><span class="math inline">\(n_1, n_2,..., n_k\)</span> son las
 repeticiones de cada elemento.</li>
 <li><span class="math inline">\(n!\)</span> es el factorial de <span class="math inline">\(n\)</span>.</li>
 <li><span class="math inline">\(n_1!\)</span>, <span class="math inline">\(n_2!\)</span> son los factoriales de <span class="math inline">\(n_1\)</span>, <span class="math inline">\(n_2\)</span></li>
@@ -475,24 +470,30 @@ a partir de tamaños especificados. En contraste, combinat crea
 permutaciones y combinaciones sin repetición directamente desde un
 vector</p>
 <p>4- Calcule:</p>
-<pre class="r"><code># a) Permutaciones con y sin repetición con n=9 y r=4
-
-permutacion_con_repeticion = nrow(permutations(9, 4 ,repeats.allowed = TRUE))
+<ol style="list-style-type: lower-alpha">
+<li>Permutaciones con y sin repetición con n=9 y r=4</li>
+</ol>
+<pre class="r"><code>permutacion_con_repeticion = nrow(permutations(9, 4 ,repeats.allowed = TRUE))
 print(paste(&quot;Permutaciones con repetición:&quot;, permutacion_con_repeticion))</code></pre>
 <pre><code>## [1] &quot;Permutaciones con repetición: 6561&quot;</code></pre>
 <pre class="r"><code>permutacion_sin_repeticion = nrow(permutations(9, 4 , repeats.allowed = FALSE))
 print(paste(&quot;Permutaciones sin repeticion:&quot;, permutacion_sin_repeticion))</code></pre>
 <pre><code>## [1] &quot;Permutaciones sin repeticion: 3024&quot;</code></pre>
-<pre class="r"><code># b) Combinaciones de largo cuatro con las letras f, g, h, i y j con y sin repetición
-letras = c(&#39;f&#39;, &#39;g&#39;, &#39;h&#39;, &#39;i&#39;, &#39;j&#39;)
+<ol start="2" style="list-style-type: lower-alpha">
+<li>Combinaciones de largo cuatro con las letras f, g, h, i y j con y
+sin repetición</li>
+</ol>
+<pre class="r"><code>letras = c(&#39;f&#39;, &#39;g&#39;, &#39;h&#39;, &#39;i&#39;, &#39;j&#39;)
 combinaciones_sin_repeticion = choose(length(letras), 4)
 print(paste(&quot;Combinaciones sin repetición:&quot;, combinaciones_sin_repeticion))</code></pre>
 <pre><code>## [1] &quot;Combinaciones sin repetición: 5&quot;</code></pre>
 <pre class="r"><code>combinaciones_repeticion = choose(length(letras) + 4 - 1, 4)
 print(paste(&quot;Combinaciones con repetición:&quot;, combinaciones_repeticion))</code></pre>
 <pre><code>## [1] &quot;Combinaciones con repetición: 70&quot;</code></pre>
-<pre class="r"><code># c) Permutaciones y combinaciones con n=30 y r=20 sin repetición
-n = 30
+<ol start="3" style="list-style-type: lower-alpha">
+<li>Permutaciones y combinaciones con n=30 y r=20 sin repetición</li>
+</ol>
+<pre class="r"><code>n = 30
 r = 20
 
 permutaciones_sin_repeticion = factorial(n) / factorial(n - r)
@@ -501,8 +502,10 @@ print(paste(&quot;Permutaciones sin repetición:&quot;, permutaciones_sin_repeti
 <pre class="r"><code>combinaciones_sin_repeticion = choose(n, r)
 print(paste(&quot;Combinaciones sin repetición:&quot;, combinaciones_sin_repeticion))</code></pre>
 <pre><code>## [1] &quot;Combinaciones sin repetición: 30045015&quot;</code></pre>
-<pre class="r"><code># d) Permutaciones con y sin repetición con n=7 y r=5
-n = 7
+<ol start="4" style="list-style-type: lower-alpha">
+<li>Permutaciones con y sin repetición con n=7 y r=5</li>
+</ol>
+<pre class="r"><code>n = 7
 r = 5
 
 permutaciones_sin_repeticion = factorial(n) / factorial(n - r)
@@ -511,9 +514,11 @@ print(paste(&quot;Permutaciones sin repetición:&quot;, permutaciones_sin_repeti
 <pre class="r"><code>permutaciones_repeticion = n^r
 print(paste(&quot;Permutaciones con repetición:&quot;, permutaciones_repeticion))</code></pre>
 <pre><code>## [1] &quot;Permutaciones con repetición: 16807&quot;</code></pre>
-<pre class="r"><code># e) Combinaciones de largo 2 con los números 1, 2, 3, 4 y 5 con y sin repetición
-
-numeros = c(1,2,3,4,5)
+<ol start="5" style="list-style-type: lower-alpha">
+<li>Combinaciones de largo 2 con los números 1, 2, 3, 4 y 5 con y sin
+repetición</li>
+</ol>
+<pre class="r"><code>numeros = c(1,2,3,4,5)
 
 combinaciones_sin_repeticion = choose(length(numeros), 2)
 print(paste(&quot;Combinaciones sin repetición:&quot;, combinaciones_sin_repeticion))</code></pre>
@@ -521,8 +526,10 @@ print(paste(&quot;Combinaciones sin repetición:&quot;, combinaciones_sin_repeti
 <pre class="r"><code>combinaciones_repeticion = choose(length(numeros) + 2 - 1, 2)
 print(paste(&quot;Combinaciones con repetición:&quot;, combinaciones_repeticion))</code></pre>
 <pre><code>## [1] &quot;Combinaciones con repetición: 15&quot;</code></pre>
-<pre class="r"><code># f) Permutaciones y combinaciones con n=50 y r=10 sin repetición
-n = 50
+<ol start="6" style="list-style-type: lower-alpha">
+<li>Permutaciones y combinaciones con n=50 y r=10 sin repetición</li>
+</ol>
+<pre class="r"><code>n = 50
 r = 10
 
 permutaciones_sin_repeticion = factorial(n) / factorial(n - r)
@@ -531,15 +538,21 @@ print(paste(&quot;Permutaciones sin repetición:&quot;, permutaciones_sin_repeti
 <pre class="r"><code>combinaciones_sin_repeticion = choose(n, r)
 print(paste(&quot;Combinaciones sin repetición:&quot;, combinaciones_sin_repeticion))</code></pre>
 <pre><code>## [1] &quot;Combinaciones sin repetición: 10272278170&quot;</code></pre>
-<pre class="r"><code># g) Permutaciones circulares posibles con n=6
-n = 6
+<ol start="7" style="list-style-type: lower-alpha">
+<li>Permutaciones circulares posibles con n=6</li>
+</ol>
+<pre class="r"><code>n = 6
 permutaciones_circulares = factorial(n - 1)
 
 print(paste(&quot;Permutaciones circulares:&quot;, permutaciones_circulares))</code></pre>
 <pre><code>## [1] &quot;Permutaciones circulares: 120&quot;</code></pre>
-<pre class="r"><code># h) combinaciones de largo 3 con las letras x, y, z, w y q con y sin repetición.
-letras = c(&#39;x&#39;, &#39;y&#39;, &#39;z&#39;, &#39;w&#39;, &#39;q&#39;)
+<ol start="8" style="list-style-type: lower-alpha">
+<li>combinaciones de largo 3 con las letras x, y, z, w y q con y sin
+repetición.</li>
+</ol>
+<pre class="r"><code>letras = c(&#39;x&#39;, &#39;y&#39;, &#39;z&#39;, &#39;w&#39;, &#39;q&#39;)
 
+# Combinaciones sin repeticion
 combinaciones_sin_repeticion = choose(length(letras), 3)
 print(paste(&quot;Combinaciones sin repetición:&quot;, combinaciones_sin_repeticion))</code></pre>
 <pre><code>## [1] &quot;Combinaciones sin repetición: 10&quot;</code></pre>
@@ -549,22 +562,26 @@ print(paste(&quot;Combinaciones con repetición:&quot;, combinaciones_repeticion
 <pre><code>## [1] &quot;Combinaciones con repetición: 125&quot;</code></pre>
 <p>5- Considere un problema de un repartidor que debe entregar paquetes
 en 40 casas y volver al origen sin pasar dos veces por la misma casa a)
-¿Cuál es la prob de que elija la ruta más corta? ¿Y la más larga? b) Si
-elige una ruta al azar que es distinta a la anterior, ¿cuál es la prob
-de que sea la ruta más corta?</p>
+¿Cuál es la probabilidad de que elija la ruta más corta? ¿Y la más
+larga? b) Si elige una ruta al azar que es distinta a la anterior, ¿cuál
+es la probabilidad de que sea la ruta más corta?</p>
 <pre class="r"><code># Total de rutas posibles
 total_rutas = factorial(40)
 
-# prob de elegir la ruta más corta o la más larga
+# Probabilidad de elegir la ruta más corta o la más larga
 prob_1 = 1/total_rutas
 
-print(paste(&quot;prob Ruta más corta o larga:&quot;, prob_1))</code></pre>
-<pre><code>## [1] &quot;prob Ruta más corta o larga: 1.22561743912839e-48&quot;</code></pre>
-<pre class="r"><code># prob de elegir la ruta más corta si la ruta previamente elegida fue diferente
+print(paste(&quot;Probabilidad Ruta más corta o larga:&quot;, prob_1))</code></pre>
+<pre><code>## [1] &quot;Probabilidad Ruta más corta o larga: 1.22561743912839e-48&quot;</code></pre>
+<pre class="r"><code># Probabilidad de elegir la ruta más corta si la ruta previamente elegida fue diferente
 prob_2 = 1/(total_rutas - 1)
-print(paste(&quot;prob de que sea la ruta más corta distinta a la anterior:&quot;, prob_2))</code></pre>
-<pre><code>## [1] &quot;prob de que sea la ruta más corta distinta a la anterior: 1.22561743912839e-48&quot;</code></pre>
-<pre class="r"><code># Si se intenta usar funciones como combinations o permutations para generar todas las posibles rutas puede ocurrir un problema debido a las limitaciones de memoria. Es menos eficiente generar todas las permutaciones, que calcular probes usando las propiedades y las fórmulas matemáticas anteriormente explicadas.</code></pre>
+print(paste(&quot;Probabilidad de que sea la ruta más corta distinta a la anterior:&quot;, prob_2))</code></pre>
+<pre><code>## [1] &quot;Probabilidad de que sea la ruta más corta distinta a la anterior: 1.22561743912839e-48&quot;</code></pre>
+<p>Si se intenta usar funciones como combinations o permutations para
+generar todas las posibles rutas puede ocurrir un problema debido a las
+limitaciones de memoria. Es menos eficiente generar todas las
+permutaciones, que calcular probabilidades usando las propiedades y las
+fórmulas matemáticas anteriormente explicadas.</p>
 <p>6- Un restaurante tiene 4 camareros que deben atender a los clientes.
 Ana atiende al 20 % de los clientes y olvida 1 de cada 15 órdenes; Bob
 atiende al 50 % de los clientes y olvida 1 de cada 8 órdenes; Carlos
@@ -572,52 +589,111 @@ atiende al 20 % de los clientes y olvida 1 de cada 12 órdenes; Diana
 atiende al 10 % de los clientes y olvida 2 de cada 7 órdenes.</p>
 <ol style="list-style-type: lower-alpha">
 <li>Formule la ecuación para resolver este problema.</li>
-<li>¿Cuál es la prob de que el cliente haya sido atendido por
+<li>¿Cuál es la probabilidad de que el cliente haya sido atendido por
 Carlos?</li>
-<li>¿Cuál es la prob de que el cliente haya sido atendido por Ana o
-Diana?</li>
-<li>Calcule la prob de que el cliente haya sido atendido por cualquiera
-de lo camareros. ¿Qué observa?</li>
+<li>¿Cuál es la probabilidad de que el cliente haya sido atendido por
+Ana o Diana?</li>
+<li>Calcule la probabilidad de que el cliente haya sido atendido por
+cualquiera de lo camareros. ¿Qué observa?</li>
+</ol>
+<p>Este problema se puede representar mediante el Teorema de Bayes <span class="math display">\[P(Camarero|\neg Olvido) = \frac{P(\neg
+Olvido|Camarero) \times P(Camarero)}{P(\neg Olvido)}\]</span></p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>¿Cuál es la probabilidad de que el cliente haya sido atendido por
+Carlos?</li>
 </ol>
 <pre class="r"><code>prob_ana = 0.20
 olvido_ana = 1/15
+no_olvido_ana = (1-olvido_ana)
 
-probabildad_bob = 0.50
+prob_bob = 0.50
 olvido_bob = 1/8
+no_olvido_bob = (1-olvido_bob)
 
 prob_carlos = 0.20
 olvido_carlos = 1/12
+no_olvido_carlos = (1-olvido_carlos)
 
 prob_diana = 0.10
 olvido_diana = 2/7
+no_olvido_diana = (1-olvido_diana)
 
-# b) ¿Cuál es la prob de que el cliente haya sido atendido por Carlos?
-cat(&quot;La prob de ser atendido por Carlos es:&quot;, prob_carlos)</code></pre>
-<pre><code>## La prob de ser atendido por Carlos es: 0.2</code></pre>
-<pre class="r"><code># c) ¿Cuál es la prob de que el cliente haya sido atendido por Ana o Diana?
+p_atendido_carlos = (prob_carlos*no_olvido_carlos)/
+  (prob_ana*no_olvido_ana + prob_bob*no_olvido_bob+
+     prob_diana*no_olvido_diana+prob_carlos*no_olvido_carlos)
+
+cat(&quot;La probabilidad es:&quot;, p_atendido_carlos)</code></pre>
+<pre><code>## La probabilidad es: 0.2085873</code></pre>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>¿Cuál es la probabilidad de que el cliente haya sido atendido por
+Ana o Diana?</li>
+</ol>
+<pre class="r"><code>prob_ana = 0.20
+olvido_ana = 1/15
+no_olvido_ana = (1-olvido_ana)
+
+prob_bob = 0.50
+olvido_bob = 1/8
+no_olvido_bob = (1-olvido_bob)
+
+prob_carlos = 0.20
+olvido_carlos = 1/12
+no_olvido_carlos = (1-olvido_carlos)
+
+prob_diana = 0.10
+olvido_diana = 2/7
+no_olvido_diana = (1-olvido_diana)
+
+p_atendido_ana = (prob_ana*no_olvido_ana)/
+  (prob_carlos*no_olvido_carlos
+   + prob_bob*no_olvido_bob+prob_diana*no_olvido_diana
+   +prob_ana*no_olvido_ana)
+
+p_atendido_diana = (prob_diana*no_olvido_diana)/
+  (prob_carlos*no_olvido_carlos + prob_bob*no_olvido_bob+
+     prob_ana*no_olvido_ana+
+     prob_diana*no_olvido_diana)
+
+p_atendido_ana_diana = p_atendido_ana + p_atendido_diana
+
 prob_ana_o_diana = prob_ana + prob_diana
-cat(&quot;La prob de ser atendido por Ana o Diana es:&quot;, prob_ana_o_diana)</code></pre>
-<pre><code>## La prob de ser atendido por Ana o Diana es: 0.3</code></pre>
-<pre class="r"><code># d) Calcule la prob de que el cliente haya sido atendido por cualquiera de los camareros.
-prob_cualquiera = prob_ana + probabildad_bob + prob_carlos + prob_diana
-cat(&quot;La prob de ser atendido por cualquier camarero es de:&quot;, prob_cualquiera)</code></pre>
-<pre><code>## La prob de ser atendido por cualquier camarero es de: 1</code></pre>
-<pre class="r"><code># se observa que la prob es de 1 o 100%
-#esto quiere decir que un cliente siempre será atendido por cualquiera de los camareros,
-# lo cual es lógico considerando el enunciado de que los camareros
-# deben atender a todos los clientes.</code></pre>
+cat(&quot;La probabilidad es:&quot;, p_atendido_ana_diana)</code></pre>
+<pre><code>## La probabilidad es: 0.2936476</code></pre>
+<ol start="4" style="list-style-type: lower-alpha">
+<li>Calcule la probabilidad de que el cliente haya sido atendido por
+cualquiera de los camareros.</li>
+</ol>
+<pre class="r"><code>p_olvido = prob_ana * olvido_ana +
+  prob_bob * olvido_bob+
+  prob_carlos * olvido_carlos +
+  prob_diana * olvido_diana
+
+p_ana_dado_olvido = (olvido_ana * prob_ana) / p_olvido
+p_bob_dado_olvido = (olvido_bob * prob_bob) / p_olvido
+p_carlos_dado_olvido = (olvido_carlos * prob_carlos) / p_olvido
+p_diana_dado_olvido = (olvido_diana * prob_diana) / p_olvido
+
+cat(&quot;Probabilidad es de:&quot;, p_ana_dado_olvido +
+      p_bob_dado_olvido +
+      p_carlos_dado_olvido +
+      p_diana_dado_olvido)</code></pre>
+<pre><code>## Probabilidad es de: 1</code></pre>
+<p>se observa que la probabilidad es de 1 o 100% esto quiere decir que
+un cliente siempre será atendido por cualquiera de los camareros, lo
+cual es lógico considerando el enunciado de que los camareros deben
+atender a todos los clientes.</p>
 <p>7- De un grupo de 35 personas, se quiere conocer la opinión de 4
 personas (elegidas al azar) sobre la legalización de la marihuana. Si se
-sabe que 18 personas están a favor y 17 en contra, ¿cuál es la prob de
-que las 4 personas seleccionadas estén en contra?</p>
+sabe que 18 personas están a favor y 17 en contra, ¿cuál es la
+probabilidad de que las 4 personas seleccionadas estén en contra?</p>
 <pre class="r"><code>prob_1ero = 17/35
 prob_2do = 16/34
 prob_3ero = 15/33
 prob_4to = 14/32
 
 prob_total = (prob_1ero*prob_2do*prob_3ero*prob_4to)
-print(paste(&quot;La prob es de:&quot;, prob_total))</code></pre>
-<pre><code>## [1] &quot;La prob es de: 0.0454545454545454&quot;</code></pre>
+print(paste(&quot;La probabilidad es de:&quot;, prob_total))</code></pre>
+<pre><code>## [1] &quot;La probabilidad es de: 0.0454545454545454&quot;</code></pre>
 </div>
 </div>
 
