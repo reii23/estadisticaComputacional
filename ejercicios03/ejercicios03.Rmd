@@ -1,0 +1,157 @@
+---
+title: 'Ejercicio 03: Distribuciones de Probabilidad'
+author: "Reinaldo Pacheco"
+date: "2023-10-18"
+output:
+  html_document: default
+  word_document: default
+---
+
+### Ejercicios 03 - Distribuciones de Probabilidad
+1.En una fábrica de teléfonos, tres teléfonos son seleccionados aleatoriamente por trabajadores para evaluar su calidad. Cada teléfono es categorizado como “aceptable” o “defectuoso” según los resultados de su evaluación. Si la probabilidad de que un teléfono sea aceptable es del 0.75 y las evaluaciones son independientes:
+a) (0.5 puntos) Identifica el tipo de variable aleatoria y la distribución que sigue.
+b) (0.75 puntos) Determina la función de probabilidad de masa.
+c) (0.75 puntos) Grafica la distribución.
+
+```{r}
+# a) La distribución es binomial y el tipo de variable es aleatoria discreta
+
+ensayos = 3
+probabilidad = 0.75
+
+# b) 
+pmf_binomial <- function(n, k, p) {
+  choose(n, k) * (p^k) * ((1-p)^(n-k))
+}
+probabilidades = sapply(0:ensayos, function(k) pmf_binomial(ensayos, k, probabilidad))
+
+# c)
+for (k in 0:ensayos) {
+  print(paste("Probabilidad de", k, "teléfonos aceptables:", round(probabilidades[k+1], 4)))
+}
+
+library(ggplot2)
+datos = data.frame(x = 0:ensayos, y = probabilidades)
+grafico <- ggplot(datos, aes(x=x, y=y)) + 
+  geom_bar(stat="identity", fill="blue4") +
+  labs(title="Distribución Binomial de teléfonos aceptables", x="Número de teléfonos aceptables", y="Probabilidad") +
+  theme_bw()
+print(grafico)
+```
+
+2. En un estudio clínico, los voluntarios son examinados para encontrar un gen asociado a la aparición de cáncer. La probabilidad de que una persona tenga el gen es del 0.15. Si se asume que la evaluación de una persona es independiente de otra:
+a) (0.5 puntos) Señala el tipo de variable aleatoria y la distribución que sigue.
+b) (1 punto) ¿Cuál es la probabilidad de que seis o más evaluaciones deban ser efectuadas para
+detectar a tres personas portadoras del gen?
+c) (0.75 puntos) ¿Cuál es el número esperado de evaluaciones que debes realizar para detectar tres personas portadoras del gen?
+d) (0.75 puntos) Grafica la distribución.
+
+```{r}
+
+# a) se utiliza la distribución de Bernoulli y el tipo de variable aleatoria es discreta 
+
+probabilidad = 0.15
+r = 3
+
+# b)
+Prob6 = 1 - pnbinom(q = 2, size = r, prob = probabilidad)
+print(paste("La probabilidad es de:", Prob6))
+
+# c) 
+esperanza = r/probabilidad
+print(paste("La cantidad de casos necesarios es:", round(esperanza)))
+
+# d)
+distribucion = dnbinom(x=0:40, size=3, prob=0.15)
+datos = data.frame(x=0:40, y=distribucion)
+grafico <- ggplot(datos, aes(x=x, y=y)) + 
+  geom_bar(stat="identity", fill="blue4") +
+  labs(title="Distribución de probabilidades", x="Número de evaluaciones", y="Probabilidad") +
+  theme_bw()
+print(grafico)
+```
+
+3. En una tienda en línea, el 30 % de los clientes realiza una compra después de ver un producto en oferta. Supongamos que observamos a 100 clientes que visitan la tienda en línea.
+a) (1 punto) ¿Cuál es la probabilidad de que exactamente 25 de estos 100 clientes realicen una compra después de ver un producto en oferta?
+b) (1.5 puntos) ¿Cuál es la probabilidad de que más de 40 clientes realicen una compra después de ver un producto en oferta?
+c) (0.75 puntos) ¿Cuál es el número esperado de clientes que realizarán una compra después de ver un producto en oferta entre los 100 observados?
+
+```{r}
+# se usa distribución binomial con una variable aleatoria discreta
+
+probabilidad = 0.3
+tamaño = 100
+
+# a)
+prob_a = dbinom(25, tamaño, probabilidad)
+print(paste("Probabilidad a):", prob_a))
+
+# b)
+prob_b = 1 - sum(dbinom(0:40, tamaño, probabilidad))
+print(paste("Probabilidad b):", prob_b))
+
+# c)
+esperanza = tamaño * probabilidad
+print(paste("Número esperado c):", esperanza))
+
+# d)
+distribucion = dbinom(0:tamaño, tamaño, probabilidad)
+datos = data.frame(x=0:tamaño, y=distribucion)
+grafico <- ggplot(datos, aes(x=x, y=y)) + 
+  geom_bar(stat="identity", fill="blue4") +
+  labs(title="Distribución de probabilidades", x="Rango", y="Probabilidad") +
+  theme_bw()
+print(grafico)
+``` 
+
+4. Una empresa contrata a 600 hombres menores de 50 años. Supongamos que el 25 % tiene un marcador en el cromosoma masculino que indica un mayor riesgo de cáncer de próstata.
+a) (0.5 puntos) Indica el tipo de variable aleatoria y la distribución que sigue.
+b) (1 punto) Si a 15 hombres de la empresa se les hace la prueba del marcador en este cromosoma,¿cuál es la probabilidad de que exactamente 2 hombres tengan el marcador?
+c) (0.75 puntos) Si a 15 hombres de la empresa se les hace la prueba del marcador en este cromosoma,¿cuál es la probabilidad de que más de 2 tengan el marcador?
+d) (0.75 puntos) Grafica la distribución.
+
+```{r}
+# a) se usa distribución de Bernoulli y la variable aleatoria es discreta
+
+probabilidad = 0.25
+tamaño = 15
+
+# b)
+prob_b = dbinom(2, tamaño, probabilidad)
+print(paste("Probabilidad b):", prob_b))
+
+# c)
+prob_c = 1 - sum(dbinom(0:2, tamaño, probabilidad))
+print(paste("Probabilidad c):", prob_c))
+
+# d)
+distribucion = dbinom(0:tamaño, tamaño, probabilidad)
+datos = data.frame(x=0:tamaño, y=distribucion)
+grafico <- ggplot(datos, aes(x=x, y=y)) + 
+  geom_bar(stat="identity", fill="blue4") +
+  labs(title="Distribución de probabilidades", x="Rango", y="Probabilidad") +
+  theme_bw()
+print(grafico)
+
+```
+
+5. El número de llamadas telefónicas que llegan a una central telefónica se modela como una variable
+aleatoria de Poisson. Supongamos que en promedio hay 6 llamadas por hora.
+a) (0.5 puntos) Identifica el tipo de variable aleatoria y la distribución que sigue.
+b) (0.75 puntos) ¿Cuál es la probabilidad de que haya exactamente tres llamadas en una hora?
+c) (0.75 puntos) ¿Cuál es la probabilidad de que haya cinco llamadas o menos en una hora?
+
+```{r}
+# a) se sigue la distribución de Poisson y la variable aleatoria es discreta
+
+lambda = 6
+
+# b)
+prob_b = dpois(3, lambda)
+print(paste("Probabilidad b):", prob_b))
+
+# c)
+prob_c = ppois(5, lambda)
+print(paste("Probabilidad c):", prob_c))
+```
+

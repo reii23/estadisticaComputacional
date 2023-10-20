@@ -10,6 +10,6 @@ Repositorio con el material realizado en la asignatura "Estadística Computacion
 
 - 01: Introducción a la Estadística Computacional
 - 02: Probabilidades, Permutaciones y Combinaciones
-
+- 03: Di
 ### Conctacto
 Ante cualquier duda o problema contactarme a través del correo reinaldo.pacheco@usach.cl
