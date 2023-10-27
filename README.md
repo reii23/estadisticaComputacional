@@ -2,7 +2,7 @@
 # Estadística Computacional
 
 ## Autor: Reinaldo Pacheco Parra
-## Ultima Actualización: 14/10
+## Ultima Actualización: 27/10
 
 Repositorio con el material realizado en la asignatura "Estadística Computacional" durante el 2023/2 en la Universidad de Santiago de Chile
 

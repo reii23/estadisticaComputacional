@@ -23,7 +23,8 @@ ui = fluidPage(
     mainPanel(
       tabsetPanel(tabPanel("Variable Cualitativa: Artistas", 
                  tableOutput("tabla_artistas"), 
-                 plotOutput("grafico_artistas")),
+                 plotOutput("grafico_artistas"),
+                  htmlOutput("analisis_artistas")),
         
         tabPanel("Variable Cuantitativa: Popularidad",
                  tableOutput("tabla_popularidad"),
@@ -52,7 +53,7 @@ server = function(input, output) {
 
   output$grafico_artistas = renderPlot({
     ggplot(top_20_artistas, aes(x=reorder(Artista, -Frecuencia), y=Frecuencia)) +
-      geom_bar(stat = "identity", fill="aquamarine4") +
+      geom_bar(stat = "identity", fill="#00008B") +
       geom_text(aes(label=Frecuencia), vjust=-0.5) +
       xlab("Artistas") +
       ylab("Frecuencia") +
@@ -60,6 +61,14 @@ server = function(input, output) {
       theme_minimal() +
       theme(axis.text.x = element_text(angle = 45, hjust = 1))
   })
+  
+output$analisis_artistas = renderUI({
+  HTML("
+    <p>La distribución de la frecuencia de apariciones entre los artistas es bastante desigual, Bad Bunny lidera la lista con 1587 apariciones, lo que es más del doble que el siguiente artista más popular Taylor Swiftv quien cuenta con 712 apariciones. El artista 'Mitski' es el número 20 y cuenta con solo 226 apariciones. </p>
+    <p>Hay una concentración de artistas con frecuencias en el rango medio, como 'Doja Cat', 'Bizarrap', 'Milo J', entre otros.</p>
+    <p>Varios de los artistas del gráfico han sacado álbumes recientemente, lo cual explicaría su alta popularidad.</p>
+  ")
+})
 
 # variable cuantitativa: indice de popularidad de las canciones
   popularidad_datos = data.frame(Popularidad = datos$popularity)
@@ -70,7 +79,7 @@ server = function(input, output) {
 
   output$grafico_popularidad = renderPlot({
     ggplot(datos, aes(x=popularity)) +
-      geom_histogram(binwidth=5, fill="aquamarine4", alpha=0.7) +
+      geom_histogram(binwidth=5, fill="#00008B", alpha=0.7) +
       xlab("Popularidad") +
       ylab("Frecuencia") +
       ggtitle("Histograma de Popularidad de las canciones") +
