@@ -1,0 +1,107 @@
+---
+title: "Ejercicio 04 - Estadística Descriptiva"
+author: "Reinaldo Pacheco Parra"
+date: "2023-10-27"
+runtime: shiny
+---
+
+Este ejercicio se trabajó con el dataset 'Top Spotify Songs in 73 Countries (Daily Updated)', para la conformación de las tablas se tomó una muestra de los datos ya que eran muchos para mostrarlos todos. Los gráficos y cálculos se realizaron con la totalidad de datos del dataset.
+
+La variable cualitativa estudia el nombre de los artistas con canciones más escuchadas en la actualidad y la variable cuantitativa estudia la popularidad en un número del 1 al 100 de las canciones.
+
+```{r setup, echo=FALSE}
+library(shiny)
+library(ggplot2)
+library(e1071)
+
+ui = fluidPage(
+  titlePanel("Análisis de Datos de Spotify"),
+  sidebarLayout(
+    sidebarPanel(h3("Información"),
+      p("Este archivo utiliza el conjunto de datos 'Top Spotify Songs in 73 Countries (Daily Updated)' para estudiar los artistas más escuchados y la popularidad de las canciones en la aplicación de reproducción de música 'Spotify'")),
+
+    mainPanel(
+      tabsetPanel(tabPanel("Variable Cualitativa: Artistas", 
+                 tableOutput("tabla_artistas"), 
+                 plotOutput("grafico_artistas")),
+        
+        tabPanel("Variable Cuantitativa: Popularidad",
+                 tableOutput("tabla_popularidad"),
+                 plotOutput("grafico_popularidad"),
+                 h4("Medidas Estadisticas"),
+                 verbatimTextOutput("media_popularidad"),
+                 verbatimTextOutput("desviacion_estandar_popularidad"),
+                 verbatimTextOutput("mediana_popularidad"),
+                 verbatimTextOutput("cuartiles_popularidad"),
+                 verbatimTextOutput("percentiles_popularidad"),
+                 verbatimTextOutput("skewness_popularidad"),
+                 htmlOutput("analisis_popularidad"))))))
+
+server = function(input, output) {
+  datos = read.csv("universal_top_spotify_songs.csv")
+  
+# variable cualitativa: artistas de spotify
+  artistas_destacados = as.data.frame(table(datos$artists))
+  colnames(artistas_destacados) = c("Artista", "Frecuencia")
+  artistas_destacados = artistas_destacados[order(-artistas_destacados$Frecuencia), ]
+  top_20_artistas = head(artistas_destacados, 20)
+  
+  output$tabla_artistas = renderTable({
+    top_20_artistas
+  })
+
+  output$grafico_artistas = renderPlot({
+    ggplot(top_20_artistas, aes(x=reorder(Artista, -Frecuencia), y=Frecuencia)) +
+      geom_bar(stat = "identity", fill="aquamarine4") +
+      geom_text(aes(label=Frecuencia), vjust=-0.5) +
+      xlab("Artistas") +
+      ylab("Frecuencia") +
+      ggtitle("Top 20 Artistas") +
+      theme_minimal() +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  })
+
+# variable cuantitativa: indice de popularidad de las canciones
+  popularidad_datos = data.frame(Popularidad = datos$popularity)
+  
+  output$tabla_popularidad = renderTable({
+    head(popularidad_datos, 20)
+  })
+
+  output$grafico_popularidad = renderPlot({
+    ggplot(datos, aes(x=popularity)) +
+      geom_histogram(binwidth=5, fill="aquamarine4", alpha=0.7) +
+      xlab("Popularidad") +
+      ylab("Frecuencia") +
+      ggtitle("Histograma de Popularidad de las canciones") +
+      theme_minimal()
+  })
+  
+  output$media_popularidad = renderPrint({ paste("Media: ", round(mean(datos$popularity), 2)) })
+  output$desviacion_estandar_popularidad = renderPrint({ paste("Desviación Estándar: ", round(sd(datos$popularity), 2)) })
+  output$mediana_popularidad = renderPrint({ paste("Mediana: ", round(median(datos$popularity), 2)) })
+
+  cuartiles_popularidad = quantile(datos$popularity, probs = c(0.25, 0.5, 0.75))
+  percentiles_popularidad = quantile(datos$popularity, probs = c(0.1, 0.9))
+  skewness_popularidad = skewness(datos$popularity)
+
+  output$cuartiles_popularidad = renderPrint({ paste("Cuartil: ", round(cuartiles_popularidad, 2)) })
+  output$percentiles_popularidad = renderPrint({ paste("Percentil: ", round(percentiles_popularidad, 2)) })
+  output$skewness_popularidad = renderPrint({ paste("Asimetría: ", round(skewness_popularidad, 2)) })
+
+  output$analisis_popularidad = renderUI({
+    HTML("<p>La media indica que en promedio, las canciones tienen una alta popularidad. Esto muestra que las canciones del conjunto de datos son populares dentro de la aplicación, esto es lógico considerando que son las canciones dentro del Top Actual de Spotify.</p>
+
+<p>La Desviación Estándar muestra que existe una variabilidad en la popularidad, lo que indica que también hay canciones que han sido menos escuchadas y, por lo tanto, están por debajo del promedio de popularidad, esto se debe a la cantidad de veces que se ha escuchado una canción.</p>
+
+<p>La Mediana sugiere que más del 50% de las canciones tiene una puntuación de más de 83 en popularidad, lo que rectifica que las canciones que están en el Top de Spotify son muy populares.</p>
+
+<p> El cuartil nos dice que el 25% de las canciones tiene una puntuación de popularidad menor o igual a 67, el 50% tiene una puntuación menor o igual a 83, y el 75% tiene una puntuación menor o igual a 90.</p>
+
+<p> El percentil nos dice que el 10% de las canciones tiene una puntuación de popularidad de 58 puntos o menos, y el 90% tiene una puntuación de 95 o menos. </p>
+
+<p> El valor de la ásimetría nos indica que la distribución de la popularidad, existen más canciones con mayor indice de popularidad que bajo indice, lo cual es correcto comparado con el gráfico obtenido.</p>")
+  })
+}
+shinyApp(ui, server)
+```
