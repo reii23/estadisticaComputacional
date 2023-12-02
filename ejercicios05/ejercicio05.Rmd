@@ -1,0 +1,52 @@
+---
+title: "ejercicio05"
+author: "Reinaldo Pacheco"
+date: "2023-11-26"
+output: html_document
+---
+
+```{r}
+library(stats)
+```
+
+### Ejercicio 1: Estimador maximo verosimil para la distribución de Poisson con lambda = 6
+
+```{r}
+lambda = 6
+
+datos_poisson = rpois(n = 1000, lambda = lambda)
+
+ver_poisson = function(lambda, datos) {
+  -sum(dpois(x = datos, lambda = lambda, log = TRUE))
+}
+
+# buscamos el valor estimado de lambda
+valor_estimado = optim(par = 1, fn = ver_poisson, datos = datos_poisson, method = "Brent", lower = 0, upper = 15)
+
+lambda_estimado = valor_estimado$par
+
+print(paste("El estimador maximo verosimil de lambda es:", lambda_estimado))
+
+```
+
+### Ejercicio 2: Estimador maximo verosimil para la distribucion exp con lambda = 10
+
+```{r}
+lambda_exp = 10
+
+datos_exp = rexp(n = 1000, rate = lambda_exp)
+
+verosimilitud_exp = function(alpha, datos) {
+# tomamos el inverso de alpha
+  -sum(dexp(x = datos, rate = 1/alpha, log = TRUE))
+}
+
+# buscamos el valor que minimiza la función de verosimilitud
+estimador_exp = optim(par = 1, fn = verosimilitud_exp, datos = datos_exp, method = "Brent", lower = 0.1, upper = 15)
+
+# calculamos el inverso del obtenido
+alpha_exp = 1 / estimador_exp$par
+
+print(paste("El estimador máximo verosímil de lambda es:", alpha_exp))
+
+```
