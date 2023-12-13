@@ -1,0 +1,95 @@
+---
+title: "ejercicio06"
+author: "Reinaldo Pacheco"
+date: "2023-12-07"
+output: html_document
+---
+
+#### Ejercicio 01
+El ejercicio 1 trata de evaluar la duración promedio de la batería de un nuevo modelo de télefono y si esta supera las 24 horas.
+Se utiliza el z-test dado que se tiene la desviación estandar y la muestra es > 30.
+Como hipótesis nula se toma que la duración media de la bateria del nuevo modelo es menor o igual a 24 horas. Como hipótesis alternativa se toma que la duración media de la batería es mayor a 24 horas.
+
+```{r}
+library(BSDA)
+set.seed(123)
+datos_muestra = rnorm(n = 40, mean = 25, sd = 2)
+resultado_test = z.test(datos_muestra, mu = 24, sigma.x = 2, alternative = "greater")
+resultado_test
+```
+Los resultados evidencian que con un 95% de confianza el p-value obtenido es de 0.0002823 y por ende, menor que 0.05 lo que se traduce en que se rechaza la hipótesis nula planteada en un principio y se acepta la hipótesis alternativa. Por lo que se concluye que la duración media de la batería del nuevo modelo es mayor a 24 horas.
+
+#### Ejercicio 02
+El ejercicio 2 trata de evaluar si el tiempo de preparación de un nuevo plato es diferente del tiempo estándar de 30 minutos. Por ende, se toma una muestra de 25 preparaciones del nuevo plato. Teniendo como promedio una preparación de 32 minutos, se quiere estudiar si es suficiente afirmar que el tiempo de preparación promedio es diferente de 32 minutos.
+Se utiliza un t_test debido a que no se conoce la varianza poblacional y la muestra es de 30.
+Se toma como hipótesis nula que el tiempo promedio de la preparación del plato es igual a 30 minutos. La hipótesis alternativa plantea que el tiempo promedio difiere a 30 minutos.
+
+```{r}
+set.seed(123)
+tiempo = rnorm(n=25, mean=32, sd = 5)
+resultado_test = t.test(tiempo, mu = 30, alternative = "two.sided")
+resultado_test
+```
+Los resultados evidencian un p-value de 0.06467. Este valor indica que es mayor a 0.05 lo que significa que con un 95% de confianza, se acepta la hipótesis nula planteada inicialmente la cual evidencia que el tiempo promedio de preparación del nuevo plato es de 30 minutos.
+
+#### Ejercicio 03
+El ejercicio 3 se trata de evaluar si existe evidencia para afirmar que la variabilidad en el proceso de producción de neumáticos nuevos es mayor que el estandar establecido. Se toma una muestra aleatoria de 30 neumáticos y se obtiene una varianza muestral de 5mm^2.
+El parámetro de estudio es la varianza en el espesor de los neumáticos y el tamaño de la muestra es de 30. 
+La hipótesis nula será que el estandar de producción es igual a 4mm^2. En cambio, la hipótesis alternativa será que el estandar de producción es mayor.
+Se utiliza el test chi-cuadrado dado que la muestra es una población normal y se interesa en obtener la varianza.
+
+```{r}
+varianza_muestra = 5  
+varianza_est = 4  
+n = 30                 
+chi_cuadrado = (n - 1) * (varianza_muestra / varianza_est)
+p_value = 1 - pchisq(chi_cuadrado, n - 1)
+resultado_test = list(statistic = chi_cuadrado, p_value = p_value)
+resultado_test
+```
+Dado los resultados obtenidos el p-value es de 0.1664, siendo mayor al nivel de significancia de 0.05. Por lo cual no hay suficiente evidencia para rechazar la hipótesis nula. Esto significa que con un 95% de confianza el proceso de producción se considera igual a 4mm^2.
+
+#### Ejercicio 04
+El ejercicio 4 trata de evaluar la efectividad de una estrategia de marketing en una cadena de cines. Inicialmente, el 40% de los clientes compran palomitas, luego de implementar la estrategia, la cadena quiere saber si el porcentaje de clientes que compran palomitas ha auentado.
+Para ello se selecciona una muestra de 200 clientes, en donde 96 de ellos ha comprado palomitas.
+La hipótesis nula es que la proporción de clientes que compran palomitas es igual a la inicial, es decir, no aumentó. En cambio, la hipótesis alternativa plantea que la proporción de clientes que compran palomitas aumentó en comparación a la existente inicialmente.
+Para ello se realiza un test de proporciones dado que se tiene la información de proporción de clientes que compran palomitas.
+
+```{r}
+clientes = 200
+exito_clientes = 96
+p0_clientes = 0.4
+resultado_test = prop.test(exito_clientes,clientes, p= p0_clientes, alternative = "greater")
+resultado_test
+```
+Los resultados evidencian que el p-value es de 0.01264, el cual es inferior al nivel de significacia de 0.05, lo que indica que la hipótesis planteada inicialmente es posible de rechazar con un 95% de confianza y aceptar la hipótesis alternativa. Por lo tanto, se puede comprobar de que la estrategia de marketing funcionó para aumentar la cantidad de clientes que compraron palomitas.
+
+#### Ejercicio 05
+El ejercicio 5 se trata de la investigación del efecto de un nuevo producto en la mejora del rendimiento atlético. Para ello se estudia una muestra de 15 deportistas en donde se mide antes y después del consumo del suplemento para determinar si este ha tenido un efecto significativo en el rendimiento de los deportistas.
+Se utiliza el test de Wilcoxon dado que no se puede asumir la normalidad de las diferencias entre los datos.
+Se toma como hipótesis nula que no hay diferencia en rendimiento antes y después de consumir el suplemento. Se plantea que la hipótesis alternativa es que sí existe diferencia en el rendimiento de los deportistas antes y despues de consumir el suplemento.
+
+```{r}
+rendimiento_antes = c(20.5, 18.7, 21.3, 19.5, 22.1, 17.8, 20, 23.4, 21.5, 18, 19.2, 22.6, 17.9, 21.7, 20.3)
+rendimiento_despues = c(22, 19.1, 21.8, 20, 23.5, 18.2, 20.7, 25.1, 22.3, 28.5, 19.7, 23, 18.3, 22.2, 21.5)
+resultado_test = wilcox.test(rendimiento_antes, rendimiento_despues, paired = TRUE, exact = FALSE)
+resultado_test
+
+```
+Los resultados evidencian que el p-value es de 0.0007051, dado que este es menor al valor de significancia de 0.05, con un 95% de confianza, se rechaza la hipotesis nula planteada incialmente, aceptando la hipótesis alternativa. Esto quiere decir que existe diferencia en el rendimiento de los deportistas antes y después de tomar el suplemento.
+
+#### Ejercicio 06
+El ejercicio 6 se trata de evaluar la preferencia de los clientes entre un plato antiguo y un plato nuevo en un restaurante. Se utiliza un test no paramétrico. 
+Los parámetros de interés son las proporcioness de clientes que prefieren el plato antiguo o el nuevo. Para poder determinar si existe o no una preferencia por el plato nuevo se utiliza el test binomial, el cual compara las proporciones observadas con una proporción esperada bajo la hipótesis nula. En este caso la proporción de platos preferidos.
+
+La hipótesis nula es que no hay una preferencia clara por ninguna de las versiones del plato. La hipótesis alternativa plantea que sí hay una preferencia clara por el plato nuevo.
+
+El número de éxitos representa preferencia por la nueva receta (9) y el número de ensayos es el total de clientes (20)
+
+```{r}
+set.seed(123)
+preferencias = sample(c(0, 1), 20, replace = TRUE)
+resultado_test = binom.test(sum(preferencias), length(preferencias), p = 0.5)
+resultado_test
+```
+Los resultados evidencian que se obtuvo un p-value de 0.8238 lo cual es superior a 0.05 lo que indica que la hipótesis nula se acepta con un 95% de confianza, por lo que, no existe evidencia de que la proporción de que el plato nuevo es preferido por sobre el plato antiguo.

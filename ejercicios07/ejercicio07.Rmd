@@ -1,0 +1,73 @@
+---
+title: "ejercicio07"
+author: "Reinaldo Pacheco"
+date: "2023-12-09"
+output:
+  pdf_document: default
+  word_document: default
+  html_document: default
+---
+
+### Análisis de Regresión Lineal Simple con el Dataset de Boston
+
+Primero, cargamos el conjunto de datos de Boston y seleccionamos las variables de interés: "RM" (número medio de habitaciones por vivienda) y "MEDV" (valor medio de las viviendas).
+
+Se eligen estas dos variables para estudiar si existe algún tipo de relación entre la cantidad de habitaciones en una vivienda, con el valor de la vivienda.
+
+```{r}
+library(MASS)
+data(Boston)
+boston_df = Boston[, c("rm", "medv")]
+```
+
+#### Regresión Lineal Simple y Gráfico
+Realizamos una regresión lineal simple entre "RM" y 'MEDV' con el fin de investigar la relación entre la media de la cantidad de habitaciones y la media del valor de las viviendas.
+Se gráfican los resultados.
+
+```{r}
+plot(boston_df$rm, boston_df$medv, 
+     xlab = "Promedio de habitaciones por vivienda (RM)", 
+     ylab = "Valor medio de las viviendas en miles de dolares (MEDV)",
+     main = "RM v/s MEDV")
+
+ajuste = lm(medv ~ rm, data = boston_df)
+abline(ajuste, col = "green")
+```
+
+Los resultados muestran una relación entre las dos variables estudiadas.
+Gráficamente, se percibe un coeficiente de relación "Strong positive" lo cual indica que estas dos variables, tienen una relación directa. Estudiando más a fondo los resultados, se puede evidenciar que a medida que aumenta el número de habitaciones por vivienda, el valor medio de las viviendas también aumenta.
+
+#### Predicción y Re-cálculo de la Regresión con Nuevos Datos
+
+Se predicen 5 nuevos registros y se recalcula la regresión lineal con estos nuevos datos.
+
+```{r}
+lm_fit_boston = lm(medv ~ rm, data = boston_df)
+
+nuevos_valores = c(4, 5, 6, 8, 9)
+nuevas_predicciones = predict(lm_fit_boston, newdata = data.frame(rm = nuevos_valores))
+
+datos_boston = data.frame(rm = nuevos_valores, medv = nuevas_predicciones)
+nuevos_datos = rbind(boston_df, datos_boston)
+
+nueva_regresion = lm(medv ~ rm, data = nuevos_datos)
+summary(nueva_regresion)
+```
+
+La incorporación de nuevos datos no modifica de manera significativa los coeficientes del modelo. Esto sugiere que el modelo es estable y que las predicciones son correctas con la tendencia observada en los datos originales.
+
+##### Análisis de Efectos de una Modificación Extrema
+Se modifica un punto del conjunto de datos por un factor extremo y recalculamos la regresión
+lineal para observar si es que un valor atípico podría afectar el modelo antes construido.
+
+```{r}
+valor_extremo = nuevos_datos
+valor_extremo$rm[1] = valor_extremo$rm[1] * 10
+
+nueva_regresion = lm(medv ~ rm, data = valor_extremo)
+summary(nueva_regresion)
+```
+
+Al agregar un dato modificado son afectados los coeficientes del modelo de manera significativa. Además el error estandar residual aumenta a 9.136, lo que indica que las predicciones del modelo son menos precisas y el R^2 disminuye a 0.03767, lo que sugiere que la capacidad del modelo para explicar la variabilidad en MEDV es mucho menor al introducir el valor atípico.
+
+En base a este análisis se demuestra que al introducir un valor extremo dentro de los datos se puede tener un impacto considerable en el modelo de regresión lineal.
