@@ -1,0 +1,284 @@
+---
+title: "Pep 2"
+author: "Reinaldo Pacheco"
+date: "2023-12-21"
+output:
+  html_document: default
+---
+
+### Parte 1:  Exploración de la calidad de vino (30%)
+
+Se cargan los conjuntos de datos de vino blanco y vino rojo con el fin de obtener el conjunto de variables que conforman el dataset. A continuación se grafica una tabla que muestra y describe las variables que contiene.
+
+```{r}
+knitr::opts_chunk$set(echo = TRUE)
+library(rmarkdown)
+library(readr)
+library(knitr)
+library(kableExtra)
+
+wine_quality_red = read_delim("winequality-red.csv", delim = ";")
+wine_quality_white = read_delim("winequality-white.csv", delim = ";")
+
+str(wine_quality_red)
+str(wine_quality_white)
+
+wine_quality_red$color = "red"
+wine_quality_white$color = "white"
+
+datos_vinos = rbind(wine_quality_red, wine_quality_white)
+
+str(datos_vinos)
+
+variables_vinos = data.frame(
+  Variable = c("fixed_acidity", "volatile_acidity", "citric_acid", "residual_sugar", "chlorides", "free_sulfur_dioxide", "total_sulfur_dioxide", "density", "pH", "sulphates", "alcohol", "quality", "color"),
+  Descripción = c("Concentración de ácidos en el vino",
+                  "Cantidad de ácido acético en el vino",
+                  "Cantidad de ácido cítrico en el vino",
+                  "Cantidad de azúcar después de la fermentación",
+                  "Cantidad de cloruro de sodio",
+                  "Cantidad de dióxido de azufre libre",
+                  "Cantidad total de dióxido de azufre",
+                  "Densidad del vino",
+                  "Nivel de pH del vino",
+                  "Cantidad de sulfatos en el vino",
+                  "Porcentaje de alcohol en el vino",
+                  "Calidad del vino (0 a 10)",
+                  "Color del vino (rojo o blanco)"),
+  Tipo_de_variable = c(rep("Cuantitativa continua", 11), "Cuantitativa discreta", "Cualitativa nominal"))
+
+kable(variables_vinos) %>% kable_styling()
+```
+
+A continuación, se visualiza la distribución de la calidad del vino a través de histogramas y gráficos. Esto con el fin de entender la distribución de la variable quality en el conjunto de datos. Principlamente viendo la frecuencia de las diferentes calidades de vino.
+
+Además se calculan metricas descriptivas de la calidad del vino, tales como la media, la mediana, la desviacion estandar y los percentiles. Esto con el fin de obtener una descripción detallada de la variable quality.
+
+a) Calidad del vino
+
+```{r}
+library("ggplot2")
+library("plotly")
+library("scales")
+library("psych") 
+library("gridExtra")
+
+num = 10
+grafico1 = ggplot(datos_vinos, aes(x = quality)) +
+  geom_histogram(binwidth = num, fill = "dodgerblue3", color="dodgerblue4", alpha=0.6) +
+  labs(title = "Calidad del Vino", x = "calidad", y = "frecuencia") +
+  theme_bw() +
+  scale_x_continuous(breaks = 0:10)
+
+grafico2 = ggplot(datos_vinos, aes(x = quality)) +
+  geom_density(fill = "dodgerblue3", color = "dodgerblue4", alpha = 0.6) +
+  labs(title = "Distribucion de la Calidad del Vino", x = "calidad", y = "densidad") +
+  theme_bw()
+grid.arrange(grafico1, grafico2, ncol = 2)
+```
+
+En los gráficos anteriores se muestra la calidad del vino por frecuencia junto a la distribución de la variable quality. Aparentemente la calidad que más se repite es el 6, seguido por el 5 y 7. Lo que indicaría una concentración en los datos centrales del rango entre 1-10. Seguidos están los vinos de calidad 4 y 8, y por último aquellos que se ubican en los extremos 1,2 9 y 10 los cuales no tienen gran participación en los datos.
+
+b) Medidas de la calidad del vino
+
+```{r}
+metricas = describe(datos_vinos$quality, IQR = TRUE, quant = c(.25, .50, .75))
+metricas = unlist(metricas)
+metricas = metricas[-1]
+tabla = data.frame(
+  Metricas = names(metricas),
+  Valores = round(metricas, 2)
+)
+row.names(tabla) = NULL
+kable(tabla, table.attr = "style='width:100%;'", booktabs = TRUE) %>% kable_styling(font_size = 11)
+```
+
+c) Análisis de la variable alcohol
+
+```{r}
+grafico = ggplot(datos_vinos, aes(x = alcohol)) +
+  geom_histogram(fill = "dodgerblue3", binwidth = 0.5, alpha=0.5, color="dodgerblue4") +
+  labs(title = "Distribución de alcohol", x = "contenido de alcohol (en %)", y = "frecuencia")+
+  theme_minimal()
+plot(grafico)
+```
+
+En el gráfico anterior se muestra la frecuencia según la cantidad de alcohol en el vino (en porcentaje), aparentemente la frecuencia más alta estaría entre 9-10. Un dato importante es que todos los vinos del estudio consideran como mínimo un 8% de alcohol lo cual se puede evidenciar en el gráfico.
+
+d) Frecuencia segun el tipo de vino
+
+```{r}
+library(dplyr)
+tipo_frecuencia = datos_vinos %>% count(color)
+grafico = ggplot(tipo_frecuencia, aes(x = color, y = n)) +
+  geom_bar(stat = "identity", fill = "dodgerblue3", alpha=0.5, color="dodgerblue4") +
+  labs(title = "Frecuencia de vinos por el color", x = "color vino", y = "frecuencia") +
+  theme_minimal()
+
+plot(grafico)
+```
+
+En el gráfico anterior se puede evidenciar la cantidad de vinos que considera el dataset, separandolos por tipo. Se puede ver que se consideran 5000 vinos blanco aproximadamente vs 1600 vinos rojo aproximadamente.
+
+f) Gráfico de caja de calidad por color de vino
+
+```{r}
+ggplot(datos_vinos, aes(x = color, y = quality)) +
+  geom_boxplot(fill = "dodgerblue3") +
+  labs(title = "Calidad del vino por tipo", x = "tipo de vino", y = "calidad del vino") +
+  theme_minimal()
+```
+
+En el diagrama anterior, se compara la calidad del vino rojo vs el blanco, se muestran medianas similares las cuales se ubican alrededor de 6. Ambos vinos tienen rangos que van de 5 a 6 lo que indica que la mayoría se ubica dentro de este nivel de calidad.
+El vino rojo tiene valores atípicos cerca del valor 8 mientras que el vino blanco tiene un valor atípico cercano al 9. Por lo que dentro de los datos obtenidos, existen algunos vinos de mejor nivel.
+
+### Parte 2: Análisis Avanzado de Factores que Influyen en la Calidad del Vino (30%)
+
+Antes de realizar alguna prueba estadística, se debe verificar la normalidad de los datos, para una elección adecuada de la prueba: si es que es paramétrica o no paramétrica. Para ello, se toma una muestra aleatoria de 5000 de la variable quality.
+
+```{r}
+library("nortest")
+
+set.seed(123)
+muestra = sample_n(datos_vinos, 5000)
+shapiro.test(muestra$quality)$p.value
+```
+
+Se obtiene que los datos no se distribuyen normalmente ya que el p-value < 0,05 lo que justifica el uso de métodos no paramétricos. Para ello se utilizará la prueba de Spearman, la cual no asume normalidad de los datos con el fin de obtener las relaciones que se tienen entre la calidad del vino y las demás variables.
+
+```{r}
+datos_vinos$alcohol = as.numeric(datos_vinos$alcohol)
+datos_vinos$quality = as.numeric(datos_vinos$quality)
+cor.test(datos_vinos$alcohol, datos_vinos$quality, method = "spearman")
+```
+
+Para evidenciar como las variables contribuyen a la calidad del vino se construirá un modelo de regresión. Dado que la relación puede ser no lineal, se consideraran modelos lineales y no lineales.
+
+```{r}
+modelo_lineal = lm(quality ~ `alcohol` + `volatile acidity` + `pH`, data = datos_vinos)
+
+modelo_no_lineal = lm(quality ~ poly(`alcohol`, 2) + poly(`volatile acidity`, 2) + `pH`, data = datos_vinos)
+
+grafico1 = ggplot(datos_vinos, aes(x = `alcohol`, y = quality)) +
+     geom_point(color = "dodgerblue4") +
+     geom_smooth(method = "lm", color = "black") +
+     labs(title = "Relación alcohol y calidad", x = "alcohol", y = "calidad") +
+     theme_bw()
+
+grafico2 = ggplot(datos_vinos, aes(x = `alcohol`, y = quality)) +
+     geom_point(color = "dodgerblue4") +
+     geom_smooth(method = "lm", formula = y ~ poly(x, 2), color = "black") +
+     labs(title = "Relacion no lineal alcohol y calidad", x = "alcohol", y = "calidad") +
+     theme_bw()
+grid.arrange(grafico1, grafico2, ncol = 2)
+summary(modelo_lineal)
+summary(modelo_no_lineal)
+```
+
+En el gráfico se puede evidenciar una relación positiva entre el alcohol y la calidad del vino. Según esto, al parecer se podría interpretar que mientras el vino tenga un mayor contenido de alcohol, este tiende a tener una mayor calidad.
+
+Se estudiarán otras variables con la calidad para ver la relación que existe entre ellas.
+
+a) Relación entre fixed acidity y calidad del vino
+
+```{r}
+modelo_lineal = lm(quality ~ `fixed acidity`, data = datos_vinos)
+modelo_no_lineal = lm(quality ~ poly(`fixed acidity`, 2), data = datos_vinos)
+
+grafico1 = ggplot(datos_vinos, aes(x = `fixed acidity`, y = quality)) +
+     geom_point(color = "dodgerblue4") +
+     geom_smooth(method = "lm", color = "black") +
+     labs(title = "Relación fixed acidity y calidad", x = "fixed acidity", y = "calidad") +
+     theme_bw()
+
+grafico2 = ggplot(datos_vinos, aes(x = `fixed acidity`, y = quality)) +
+     geom_point(color = "dodgerblue4") +
+     geom_smooth(method = "lm", formula = y ~ poly(x, 2), color = "black") +
+     labs(title = "Relación fixed acidity y calidad ", x = "fixed acidity", y = "calidad") +
+     theme_bw()
+
+grid.arrange(grafico1, grafico2, ncol = 2)
+
+summary(modelo_lineal)
+summary(modelo_no_lineal)
+```
+
+En el gráfico anterior se puede evidenciar que la relación entre fixed acidity y alcohol aparentemente no es muy significativa ya que no existe una recta que indique una relación positiva o negativa sobre la calidad del alcohol. Aparentemente esta variable no mostraría gran importancia como lo fue la anterior. Esto nos indicaría que a la hora de identificar la significacia de esta variable sobre la calidad del vino, esta no debería ser una de las más importantes.
+
+b) Relación entre volatile acidity y quality
+
+```{r}
+modelo_lineal = lm(quality ~ `volatile acidity`, data = datos_vinos)
+
+modelo_no_lineal = lm(quality ~ poly(`volatile acidity`, 2), data = datos_vinos)
+
+grafico1 = ggplot(datos_vinos, aes(x = `volatile acidity`, y = quality)) +
+     geom_point(color = "dodgerblue4") +
+     geom_smooth(method = "lm", color = "black") +
+     labs(title = "Relación volatile acidity y calidad", x = "volatile acidity", y = "calidad") + theme_bw()
+
+grafico2 = ggplot(datos_vinos, aes(x = `volatile acidity`, y = quality)) +
+     geom_point(color = "dodgerblue4") +
+     geom_smooth(method = "lm", formula = y ~ poly(x, 2), color = "black") +
+     labs(title = "Relación volatile acidity y calidad", x = "volatile acidity", y = "calidad") + theme_bw()
+grid.arrange(grafico1, grafico2, ncol = 2)
+summary(modelo_lineal)
+summary(modelo_no_lineal)
+```
+
+En el gráfico anterior se puede evidenciar una relación significativa, lo cual podría indicar que esta variable es importante para la calidad del vino.
+
+c) Relación sulphates y calidad del vino
+```{r}
+modelo_lineal = lm(quality ~ sulphates, data = datos_vinos)
+modelo_no_lineal = lm(quality ~ poly(sulphates, 2), data = datos_vinos)
+
+grafico1 = ggplot(datos_vinos, aes(x = sulphates, y = quality)) +
+     geom_point(color = "dodgerblue4") +
+     geom_smooth(method = "lm", color = "black") +
+     labs(title = "Relación sulphates y calidad", x = "sulphates", y = "calidad") +
+     theme_bw()
+
+grafico2 = ggplot(datos_vinos, aes(x = sulphates, y = quality)) +
+     geom_point(color = "dodgerblue4") +
+     geom_smooth(method = "lm", formula = y ~ poly(x, 2), color = "black") +
+     labs(title = "Relación sulphates y calidad", x = "sulphates", y = "calidad") +
+     theme_bw()
+grid.arrange(grafico1, grafico2, ncol = 2)
+
+summary(modelo_lineal)
+summary(modelo_no_lineal)
+```
+
+Debido a la forma del gráfico anterior, se puede identificar que sulphates aparentemente también sería una de las variables importantes al momento de identificar la calidad en el vino ya que tiene una relación positiva, aunque sería menor que la de alcohol y la de volatile acidity.
+
+### Parte 3: Predictor de calidad (40%)
+
+Para finalizar, se construirá un modelo predictivo. Para lo que se ocupará la función train de la librería caret, debido a que incluye las funciones para obtener el RMSE y R^2
+
+```{r}
+library(caret)
+
+set.seed(123)
+index = createDataPartition(datos_vinos$quality, p = 0.8, list = FALSE)
+train = datos_vinos[index, ]
+test_datos = datos_vinos[-index, ]
+
+control = trainControl(method = "repeatedcv", number = 10, repeats = 3)
+modelo = train(quality ~ . - color, data = train, method = "lm", trControl = control)
+prediccion = predict(modelo, test_datos)
+rmse_test = RMSE(prediccion, test_datos$quality)
+rcuadrado_test = R2(prediccion, test_datos$quality)
+importancia = varImp(modelo, scale = FALSE)
+resultado = data.frame(RMSE = rmse_test, R_Squared = rcuadrado_test)
+
+print(importancia)
+```
+
+RMSE: El valor obtenido es de aproximadamente (0.739), lo cual nos indica un error moderado, dado que la variable quality no se mide con décimales sino que con enteros, este error puede considerarse aceptable ya que es menor a 1.
+
+R^2: El valor de R^2 obtenido (0,302) indica que con un 30,2% la variabilidad en la calidad del vino puede ser explicada por el modelo, mientras que su complemento, un 69,8% no puede ser explicado con las variables que se tienen hasta el momento por lo que podrían estar influyendo otros factores.
+
+Según la importancia, las variables que más se relacionan con la calidad del vino son volatile acidity (15.262) , alcohol (13.637) y sulphates (9.009) . Lo cual comprueba que aquellas variables tienen una importancia signficativa sobre la calidad del vino producido lo que coincide con los gráficos obtenidos en la parte 2.
+
+Mientras que las variables que menos se relacionan con la calidad del vino son chlorides (0.576), citrid acid (1.121) y fixed acidity (4.308), esta última coincidiendo con el gráfico obtenido en la parte 2.

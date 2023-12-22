@@ -1,0 +1,268 @@
+---
+title: "PEP 2 - 1/2023"
+author: "Manuel Villalobos"
+date: "2023-12-19"
+output:
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(kableExtra)
+library(knitr)
+```
+
+### Recoleción de datos
+```{r}
+# Lista los archivos en el directorio
+archivos = list.files("PROCESADOS/")
+datos = NULL
+# Cargar todos los archivos en un único csv
+for (a in 1:length(archivos))
+{
+  nombre_archivo = paste("PROCESADOS/",archivos[a],sep="")
+  datos = rbind(datos,read.csv(nombre_archivo,header = T))
+}
+
+write.csv(datos,"datos_consolidados.csv",sep=";",row.names = F)
+```
+
+### Clasificación de los datos
+
+```{r, include = TRUE}
+
+# Crear un data frame con la información de la tabla
+datos_tabla <- data.frame(
+  Variable = c("Estamento", "Grado", "Título o oficio", "Función o cargo", "Unidad", "Bruto a haber"),
+  Descripción = c("Categoría o nivel de empleo del personal", 
+                  "Posición que ocupa un(a) funcionario(a) público(a) en una institución gubernamental.",
+                  "Nivel de calificación o formación del funcionario o funcionaria",
+                  "Puesto o cargo ocupado por el funcionario o funcionaria",
+                  "Unidad en que trabaja el funcionario o funcionaria",
+                  "Remuneración total en pesos chilenos del funcionario o funcionaria"),
+  Tipo_de_variable = c("Cualitativa nominal-política", "Cualitativa ordinal-política", 
+                       "Cualitativa nominal-política", "Cualitativa nominal-política",
+                       "Cualitativa nominal-política", "Cuantitativa discreta de intervalo")
+)
+
+# Usar kable() para crear la tabla
+kable(datos_tabla)
+```
+
+## Analisis Descriptivo
+
+### a) Remuneraciones
+El objetivo de esta investigación es analizar las remuneraciones del personal, una variable cuantitativa que puede ser caracterizada mediante la construcción de un histograma o su distribución de densidad. Estos métodos permitirán visualizar y comprender mejor la distribución de los salarios en el conjunto de datos estudiado.
+
+```{r}
+library("ggplot2")
+library("plotly")
+library("scales") #Arregla escalas
+library("psych") 
+library("gridExtra")
+
+
+#Genero gráfico
+num_bins = 400000 #Quiebres
+g1 = ggplot(datos, aes(x = BrutoHaber)) +
+  geom_histogram(binwidth = num_bins, fill = "dodgerblue3",color="dodgerblue4",alpha=0.6) +
+  labs(title = "Histograma", x = "Remuneración en Millones de pesos", y = "Frecuencia")
+g1 = g1+theme_bw()
+g1 = g1 + scale_x_continuous(label = scales::comma) #Arregla la notación del eje x
+
+g2 = ggplot(datos, aes(x = BrutoHaber)) +
+  geom_density(fill = "dodgerblue3", color = "dodgerblue4", alpha = 0.6) +
+  labs(title = "Distribución de probabilidad", x = "Remuneración en Millones de Pesos", y = "Densidad") +
+  theme_bw()
+g2 = g2 + scale_x_continuous(label = scales::comma) #Arregla la notación del eje x
+
+grid.arrange(g1, g2, ncol = 2, widths = c(0.5, 0.5))
+```
+
+Las medidas estadísticas de las remuneraciones incluyen centralidad, dispersión, posición y forma, y son las siguientes:
+
+```{r}
+# Crear la lista de definiciones
+tabla_metricas = list(
+  Metricas = c("n", "mean", "sd", "median", "trimmed", "mad", "min", "max", "range", "skew", "kurtosis", 
+               "se", "IRQ", "Q0.25", "Q0.50", "Q0.75"),
+  Descripcion = c("número de muestras", "media aritmética", "desviación estándar", "mediana", 
+                  "media aritmética calculada sin el 10% de los valores de los extremos superiores e inferiores", 
+                  "desviación mediana absoluta", "valor mínimo", "valor máximo", "valor máximo - valor mínimo",
+                  "simetría", "curtosis", "error estándar", "rango intercuartil","percentil 25 (Primer cuartil)",
+                  "percentil 50 (Segundo cuartil o mediana)", "percentil 75 (Tercer cuartil)")
+)
+
+metricas=describe(datos$BrutoHaber,IQR=T,quant=c(.25,.50,.75)) #Cálculo e métricas
+metricas = unlist(metricas)
+metricas = metricas[-1]
+tabla_metricas$Valores = round(metricas,1)
+tabla_metricas = data.frame(tabla_metricas)
+row.names(tabla_metricas) = NULL
+kable(tabla_metricas, table.attr = "style='width:100%;'", booktabs = TRUE,format.args = list(big.mark = ","),
+      lines = "full") %>%  kable_styling(font_size = 11)
+```
+
+### b) Estamento
+La distribución de frecuencias del estamento de los(as) funcionarios(as) es la siguiente:
+```{r}
+library("dplyr")
+
+estamento = datos %>% count(Estamento)
+estamento = estamento[order(estamento$n,decreasing = T),]
+estamento=data.frame(estamento)
+
+#Creación de gráfico
+g3 = ggplot(estamento, aes(x = reorder(Estamento, n), y = n))
+g3 = g3 + geom_bar(stat = "identity", fill = "dodgerblue3",alpha=0.5,color="dodgerblue4") 
+g3 = g3 + labs(title = "Frecuencia de funcionarios(as) por estamento", x = "Estamento", y = "Frecuencia")
+g3 = g3 + theme_minimal()
+g3 = g3 + theme(axis.text = element_text(size = 8), axis.title.x = element_text(size = 8), 
+              axis.title.y = element_text(size = 10))
+g3 = g3 + coord_flip()
+
+plot(g3)
+```
+
+### c) Unidad
+La distribución de frecuencias de las unidades de desempeño de los(as) funcionarios(as) es la siguiente, mostrando las 10 más frecuentes:
+
+```{r}
+unidad = datos %>% count(Unidad) %>% top_n(10)
+unidad = unidad[order(unidad$n,decreasing = T),]
+unidad = data.frame(unidad)
+
+#Creación de gráfico
+g = ggplot(unidad, aes(x = reorder(Unidad, n), y = n))
+g = g + geom_bar(stat = "identity", fill = "dodgerblue3",alpha=0.5,color="dodgerblue4") 
+g = g + labs(title = "Frecuencia de funcionarios(as) por unidad (top 10)", x = "Unidad", y = "Frecuencia")
+g = g + theme_minimal()
+g = g + theme(axis.text = element_text(size = 8), axis.title.x = element_text(size = 8), 
+              axis.title.y = element_text(size = 10))
+g = g + coord_flip()
+
+plot(g)
+```
+
+### d) Grado
+La distribución de frecuencias del grado de los(as) funcionarios(as) es la siguiente, mostrando las 10 más frecuentes:
+```{r}
+grado = datos %>% count(Grado) %>% top_n(10)
+grado = grado[order(grado$n,decreasing = T),]
+grado = data.frame(grado)
+
+#Creación de gráfico
+g = ggplot(grado, aes(x = reorder(Grado, n), y = n))
+g = g + geom_bar(stat = "identity", fill = "dodgerblue3",alpha=0.5,color="dodgerblue4") 
+g = g + labs(title = "Frecuencia de funcionarios(as) por grado (top 10)", x = "Grado", y = "Frecuencia")
+g = g + theme_minimal()
+g = g + theme(axis.text = element_text(size = 8), axis.title.x = element_text(size = 8), 
+              axis.title.y = element_text(size = 10))
+g = g + coord_flip()
+
+plot(g)
+```
+
+## Analisis inferencial
+
+### Parte 1
+Para determinar si la remuneración media o mediana de los académicos a contrata de la USACH se encuentra dentro del 2% de la población que gana más de $2.5 millones de pesos, es necesario realizar un análisis estadístico inferencial. Antes de aplicar una prueba de contraste de hipótesis para una muestra, es fundamental examinar la normalidad de los datos para una elección adecuada de la prueba: paramétrica o no paramétrica.
+
+```{r}
+library("nortest")
+datos_tmp = datos[which(datos$Estamento=="ACADEMICOS"),]
+
+#Aplicación de prueba Kolmogorov Smirnov
+lillie.test(datos_tmp$BrutoHaber)$p.value
+```
+
+El resultado de la prueba de normalidad, indica que los datos no siguen una distribución normal, por lo que se utilizará una prueba no paramétrica, en este caso, la prueba de Wilcoxon de una muestra.
+
+```{r}
+#Prueba estadística
+prueba = wilcox.test(datos_tmp$BrutoHaber, mu = 2500000,alternative = "greater",exact = F)
+prueba
+```
+
+Para complementar el posterior análisis, se calcularán las medidas o métricas estadísticas respectivas:
+
+```{r}
+# Crear la lista de definiciones
+tabla_metricas = list(
+  Metricas = c("n", "mean", "sd", "median", "trimmed", "mad", "min", "max", "range", "skew", "kurtosis", 
+               "se", "IRQ", "Q0.25", "Q0.50", "Q0.75"),
+  Descripcion = c("número de muestras", "media aritmética", "desviación estándar", "mediana", 
+                  "media aritmética calculada sin el 10% de los valores de los extremos superiores e inferiores", 
+                  "desviación mediana absoluta", "valor mínimo", "valor máximo", "valor máximo - valor mínimo",
+                  "simetría", "curtosis", "error estándar", "rango intercuartil","percentil 25 (Primer cuartil)",
+                  "percentil 50 (Segundo cuartil o mediana)", "percentil 75 (Tercer cuartil)")
+)
+
+metricas=describe(datos_tmp$BrutoHaber,IQR=T,quant=c(.25,.50,.75)) #Cálculo e métricas
+metricas = unlist(metricas)
+metricas = metricas[-1]
+tabla_metricas$Valores = round(metricas,1)
+tabla_metricas = data.frame(tabla_metricas)
+row.names(tabla_metricas) = NULL
+kable(tabla_metricas, table.attr = "style='width:100%;'", booktabs = TRUE,format.args = list(big.mark = ","),
+      lines = "full") %>%  kable_styling(font_size = 11)
+```
+
+# Parte 2
+Para investigar la relación entre el grado y la remuneración, se construirá un modelo de regresión lineal simple. Sin embargo, antes de proceder, es necesario excluir a los(as) funcionarios(as) que no tienen un grado asociado a su remuneración.
+
+```{r}
+datos_tmp = datos[which(datos$Grado!="S/G"),]
+
+#crea modelo de regresión
+datos$Grado=as.numeric(datos$Grado)
+regresion = lm(BrutoHaber~Grado,data = datos)
+#crea gráfico
+g = ggplot(datos,aes(x=Grado,y=BrutoHaber))
+g = g + geom_point(aes(x=Grado,y=BrutoHaber),datos,color="dodgerblue4") 
+g = g + theme_bw() + ylab("Remuneración de funcionarios en CL$M")
+g = g + xlab("Grado de contratación")
+g = g + theme(axis.text = element_text(size = 10), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 12))
+g = g + geom_smooth(method = "lm",level = 0.95, color = "black", fill = "dodgerblue3",se = TRUE)
+g = g = g + scale_y_continuous(label = scales::comma) #Arregla la notación del eje y
+
+#Grafico
+plot(g)
+```
+
+Las características del modelo de regresión son las siguientes:
+
+```{r}
+summary(regresion)
+```
+
+# Analisis de resultados
+```{r}
+
+```
+
+El estudio descriptivo muestra que las remuneraciones de los(as) funcionarios(as) centran su distribución bajo los $2,000,000 de pesos (Asimétrica positiva - 1.9), centrada en la media (Kurtosis positiva - 3). Ésta última es $848,636, y su mediana es de $587,764, lo que sugiere dispersión de remuneraciones (desviación estándar de $845,191). Existe un 25% de los(as) funcionarios(as) que gana más de $1,041,632, con un máximo de $6,450,387. Por otro lado, la remuneración mínima es de $48, esto se puede deber a una devolución por reajuste o el remanente de un(a) funcionario(a) al que se le ha descontado parte de su remuneración e incluso puede ser un error de registro.
+
+Con relación a las otras variables, la mayoría de los(as) funcionarios(as) pertenecen al estamento de profesores por horas, representando la mayor proporción. Luego, en una proporción aproximadamente tres veces menor, encontramos a los profesionales, administrativos(as) y académicos(as). En menor cantidad, se observan funcionarios(as) que son técnicos(as), auxiliares y personal del área clínica. En cuanto a la distribución de unidades, se observa una distribución bastante pareja en general. Sin embargo, algunos departamentos se destacan por su mayor representación. Los más predominantes son el Departamento de Matemática y Ciencia de la Computación, el Departamento de Lingüística y Literatura, y el Departamento de Tecnologías Industriales. Es interesante notar que el Departamento de Ingeniería Industrial, el primer departamento del área de ingeniería, se encuentra en la sexta posición en términos de presencia de funcionarios(as). Por último, la mayoría de los(as) funcionarios(as) que trabajan bajo modalidad de profesor(a) por hora no cuentan con grado de remuneración. Los grados más frecuentes son el 6, 17, 8 y 10.
+
+En cuánto a las preguntas planteadas en el análisis inferencial, los datos indican que los(as) académicos(as) de la universidad reciben como media una remuneración bruta de $2,804,495 con una mediana de $2,961,751. El 75% de los(as) académicos(as) recibe más de $2,550,387 y el 25% más de $3,213,209. con un máximo de $6,049,695. Tal como podría parecer, la prueba de hipótesis señala con un 95% de confianza (p<0.05
+) que la mediana de la remuneración de los(as) académicos(as) es superior a la del 2% de la población chilena ($2,500,000), perteneciendo estos(as) funcionarios(as) al 2% más rico(a) del país.
+
+Por último, en relación a la asociación entre el grado y las remuneraciones, se observa una relación inversamente proporcional. Aunque es factible desarrollar un modelo de regresión con coeficientes significativos, la remuneración solo puede explicarse en un 67% por el grado (R2≈0.67)
+ y los residuos del modelo alcanzan valores de hasta $4,000,000. Esta discrepancia puede deberse a asignaciones especiales, como “asignación de responsabilidad”, “incentivo al paper” u otras compensaciones adicionales en la remuneración.
+ 
+# Toma de decisiones
+
+Esta sección fue creada con apoyo de ChatGPT3.
+
+Como Gestor de Remuneraciones, utilizaría estos resultados anteriores para identificar áreas de mejora en las políticas de remuneración, garantizar la equidad salarial y tomar decisiones informadas para mejorar la satisfacción y bienestar de los(as) funcionarios(as) en la universidad. Además, sería relevante mantener un seguimiento continuo y actualizado de las remuneraciones para adaptarse a cambios en el mercado laboral y asegurar la atracción y retención de talento en la institución. En particular, tomaría las siguientes decisiones basadas en los hallazgos del análisis:
+
+Equidad salarial. Observar que la mayoría de los(as) funcionarios(as) reciben remuneraciones centradas bajo los $2,000,000 de pesos y con una mediana de $587,764, podría indicar que existe una brecha salarial entre los niveles salariales. Sería importante realizar una revisión de la equidad salarial para asegurarse de que las remuneraciones sean justas y acordes con las responsabilidades y funciones de cada puesto.
+
+Distribución de unidades. Dado que se destacan algunos departamentos con mayor representación de funcionarios(as), sería necesario revisar si la distribución de recursos humanos es adecuada y si hay algún departamento que requiere una mayor atención en términos de dotación de personal.
+
+Revisión de modalidad de contratación. La predominancia de profesores(as) por horas y la ausencia de grados de remuneración en algunos casos sugiere la necesidad de revisar las modalidades de contratación y la estandarización de los salarios para diferentes cargos y funciones. Esto garantizará una mayor transparencia y equidad en las remuneraciones.
+
+Evaluación de compensaciones adicionales. Dado que los residuos del modelo de regresión alcanzan valores de hasta $4,000,000, sería fundamental revisar y analizar las asignaciones especiales y compensaciones adicionales, como “asignación de responsabilidad” e “incentivo al paper”. Esto permitirá asegurar que dichas asignaciones estén justificadas y no generen distorsiones en las remuneraciones.
+
+Política de atracción y retención de talento. Con el análisis inferencial que sugiere que los(as) académicos(as) de la universidad pertenecen al 2% más rico de la población chilena, se debe asegurar una política de remuneración competitiva para atraer y retener a profesionales altamente calificados. Se deben revisar los salarios y beneficios ofrecidos para asegurar que estén alineados con el mercado laboral y las expectativas de los(as) funcionarios(as).
+

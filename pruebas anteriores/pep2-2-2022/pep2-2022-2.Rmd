@@ -1,0 +1,218 @@
+---
+title: "PEP2"
+author: "Manuel Villalobos"
+date: "2023-12-16"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# Define a function to check if a package is installed
+is.installed <- function(mypkg) is.element(mypkg, installed.packages()[,1])
+
+# List of packages required for this document
+packages <- c("ggplot2", "plotly", "psych", "nortest", "knitr")
+
+# Install if not already installed
+for (pkg in packages) {
+  if (!is.installed(pkg)) {
+    install.packages(pkg, repos = "http://cran.rstudio.com")
+  }
+}
+
+# Load the packages
+library(ggplot2)
+library(plotly)
+library(psych)
+library(nortest)
+library(knitr)
+```
+
+a. Pregunta 1 - (20 puntos)
+Como tesis, uno de los estudiantes de Ingeniería Civil Informática que oriento ha desarrollado una aplicación web, que permite a los jugadores(as) y organizadores(as) de torneos (1) usar servidores de Counter-Strike: Global Offensive (CS: GO) y (2) procesar datos con baja latencia y buen tickrate.
+
+Como parte de la evaluación de la aplicación, el estudiante registró los tiempos de carga en segundos de la página de inicio de su aplicación y de otros sitios web, obteniendo los siguientes resultados.
+
+Compare los tiempos de carga resultantes de la aplicación del estudiante con respecto a los otros sitios web usando estadística (7 puntos).
+El sitio Backlinko estudió los tiempos de carga de más de 5.2 millones de sitios web, obteniendo una media de 10,3 segundos. Evalúe los tiempos de la aplicación del estudiantado respecto al reportado por Backlinko (7 puntos).
+Concluya sobre los resultados obtenidos en los puntos anteriores (6 puntos).
+
+```{r}
+datos=read.csv("datos_preg1.csv",sep=";",header=T)
+
+#-------------------------------
+# PARTE 1
+#-------------------------------
+
+  #Gráfico
+g=ggplot(datos, aes(source,landing_page)) +  geom_boxplot(fill = "paleturquoise", color = "cadetblue4") + 
+  labs(x="Sitio web", y="Tiempos de carga - landing page") +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + theme(text = element_text(size = 12)) 
+ggplotly(g)
+```
+
+```{r}
+estadisticos=describeBy(datos$landing_page, datos$source, mat = F)
+print(estadisticos)
+```
+
+```{r}
+#Evaluación de normalidad para los datos del estudiante
+    #Pruebas de hipótesis
+    t1a=lillie.test(datos$landing_page[which(datos$source=="estudiante")])
+    t1b=shapiro.test(datos$landing_page[which(datos$source=="estudiante")])
+print(t1a)
+```
+
+```{r}
+print(t1b)
+```
+
+```{r}
+    #QQPLOT2
+   qqnorm(datos$landing_page[which(datos$source=="estudiante")], pch = 19, col = "darkblue")
+   qqline(datos$landing_page[which(datos$source=="estudiante")])
+```
+
+```{r}
+  #Los datos no son normales y existe diferencia entre los tiempos de carga con las otras web - para pior
+   resultado=wilcox.test(landing_page~source,datos,paired = FALSE,exact=F)
+   print(resultado)
+```
+
+```{r}
+#-------------------------------
+# PARTE 2
+#-------------------------------
+   #Dato que no son normales
+   x=datos$landing_page[which(datos$source=="estudiante")]
+   resultado=wilcox.test(x,mu=10.3,alternative="less",exact=F)
+   print(resultado)
+```
+
+b. Pregunta 2 - (20 puntos)
+Durante la última clase revisamos la relación entre el gasto percápita en salud y la expectativa de vida en años de las personas que viven en los países de la Organización para la Cooperación y el Desarrollo Económicos (OCDE). Los datos utilizados correspondían al año 2015 fueron descargados desde el sitio Our world in data.
+
+Para su facilidad, estos datos han sido organizados, tabulados y disponibilizados en este sitio, pudiendo ser graficados de la siguiente manera.
+
+```{r}
+datos=read.csv("datos_preg2.csv",sep=";",header=T)
+
+grafico=ggplot(datos,aes(Spend_health_US ,year_expectative,,label=Country)) + 
+  geom_point(aes(Spend_health_US,year_expectative),datos,color="darkblue",alpha=0.4) +
+  theme_bw() + xlab("Gasto percápita en salud ($US)") + ylab("Expectativa de vida en años") + 
+  ggtitle("Expectativa de vida y Gasto percápita en salud ($US)") +
+  theme(plot.title = element_text(hjust = 0.5)) + geom_text(hjust=0.1, vjust=0.1)
+ggplotly(grafico)
+```
+
+Para estos datos:
+
+Proponga un modelo de regresión lineal que relacione el gasto percápita con la expectativa de vida en años (variable dependiente). Evalúe el modelo usando los criterios de calidad visto en clases (5 puntos).
+Proponga un nuevo modelo de regresión que se ajuste en mayor medida a los datos. Compruebe cuantitativamente la mejora en el ajuste (10 puntos).
+Analice los resultados obtenidos contextualizando su respuesta al problema (5 puntos).
+
+```{r}
+#--------------------------
+#Regresión lineal
+#--------------------------
+fit_linear = lm(year_expectative~Spend_health_US,datos)
+print(fit_linear)
+```
+
+```{r}
+print(summary(fit_linear))
+```
+
+```{r}
+grafico_lr=ggplot(datos,aes(Spend_health_US ,year_expectative,,label=Country)) + 
+  geom_point(aes(Spend_health_US,year_expectative),datos,color="darkblue",alpha=0.4) +
+  theme_bw() + xlab("Gasto percápita en salud ($US)") + ylab("Expectativa de vida en años") + 
+  ggtitle("Relación gasto percápita en salud ($US) y expectativa de vida para diferentes países") +
+  theme(plot.title = element_text(hjust = 0.5)) + geom_text(hjust=0.1, vjust=0.1) +
+  geom_smooth(method ="lm", formula = y ~ x,level=0.95)
+ggplotly(grafico_lr)
+```
+
+```{r}
+#--------------------------
+#Regresión logarítmica
+#--------------------------
+
+fit_log = nls(year_expectative ~a+b*log(Spend_health_US),data = datos, start = list(a=1,b=1))
+print(summary(fit_log))
+```
+
+```{r}
+datos$year_expectative_proy= 55.7772 + 3.0205 * log(datos$Spend_health_US)
+
+
+grafico_logr=ggplot(datos,aes(Spend_health_US ,year_expectative,,label=Country)) + 
+  geom_point(aes(Spend_health_US,year_expectative),datos,color="darkblue",alpha=0.4) +
+  theme_bw() + xlab("Gasto percápita en saluda ($US)") + ylab("Expectativa de vida en años") + 
+  ggtitle("Relación gasto percápita en saluda ($US) y expectativa de vida para diferentes países") +
+  theme(plot.title = element_text(hjust = 0.5)) + geom_text(hjust=0.1, vjust=0.1) +
+  geom_line(aes(Spend_health_US,year_expectative_proy),datos,color="red",cex=1,alpha=0.5) +
+  geom_smooth(method ="gam", formula = y ~ log(x),level=0.95)
+ggplotly(grafico_logr)
+```
+
+c. Pregunta 3 - (20 puntos)
+Los(as) autores(as) (Blanco-Cedres, Pérez Rancel, and Osuna 2005) realizaron un estudio descriptivo para identificar conocimientos sobre VIH/SIDA y conductas sexuales en adolescentes universitarios de distintos estratos socioeconómicos en la Gran Caracas, Venezuela. Para ello, aplicaron una encuesta que exploró diferentes aspectos: sociodemográficos, económicos, conocimiento sobre VIH/SIDA y conductas sexuales asociadas con el virus.
+
+La muestra de estudiantes consideró dos universidades diferentes: Universidad Metropolitana (Unimet) y Universidad Central de Venezuela (UCV) distribuidos de la siguiente manera.
+
+Sexo biológico estudiantado	UNIMET	UCV
+Masculino	69	97
+Femenino	43	59
+
+Por otro lado, los ingresos mensuales de las familias del estudiantado siguieron la siguiente distribución.
+
+Ingreso familiar x mes ($US)	UNIMET	UCV
+Menor o igual a 1000 US	31	80
+Más de 1000 US	81	76
+
+Determine si la muestra es proporcionalmente equitativa en términos de sexo biológico y universidades (7 puntos).
+Determine si existen diferencias entre los ingresos familiares y la universidad a la que asiste el estudiantado (7 puntos).
+Analice los resultados obtenidos contextualizando su respuesta al problema (6 puntos).
+
+```{r}
+#-----------------
+# Muestra homogénea
+#-----------------
+
+tabla = rbind(c(69,43),c(97,59))
+colnames(tabla) = c("UNIMET","UCV")
+rownames(tabla) = c("Masculino","Femenino")
+kable(tabla)
+```
+
+UNIMET	UCV
+Masculino	69	43
+Femenino	97	59
+
+```{r}
+print(chisq.test(tabla,correct=F))
+```
+
+```{r}
+#-----------------
+# Diferencias entre ingresos e universidad
+#-----------------
+
+tabla = rbind(c(31,80),c(81,76))
+colnames(tabla) = c("UNIMET","UCV")
+rownames(tabla) = c("Menor o igual a 1000 US","Más de 1000")
+kable(tabla)
+```
+
+
+UNIMET	UCV
+Menor o igual a 1000 US	31	80
+Más de 1000	81	76
+
+```{r}
+print(chisq.test(tabla,correct=F))
+```

@@ -18,5 +18,13 @@ En los ejercicios se utilizó el Lenguaje de Programación "R" 4.3.1 a través d
 - 06: Ejercicios Nivel de Significancia
 - 07: Regresión Lineal
 
+### PEP 2
+- 2/2023: Wine Quality (Realizada por Reinaldo Pacheco)
+
+### Pruebas Anteriores 
+#### PEP 2
+- 1/2022: Remuneraciones de personal (Extraída de RPubs de Prof. Manuel Villalobos)
+- 2/2022: CSGO (Extraída de RPubs de Prof. Manuel Villalobos)
+
 ### Contacto
 Ante cualquier duda o problema contactarme a través del correo reinaldo.pacheco@usach.cl
